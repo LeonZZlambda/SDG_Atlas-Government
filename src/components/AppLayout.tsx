@@ -109,6 +109,10 @@ const IconClose = () => (
 );
 
 
+interface AppLayoutProps {
+  children: preact.ComponentChildren;
+}
+
 export function AppLayout({ children }: AppLayoutProps) {
   const { state, dispatch } = usePlatform();
   const { t } = useTranslation();

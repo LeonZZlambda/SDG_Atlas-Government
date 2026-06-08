@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'preact/hooks';
 import { usePlatform } from '../context/PlatformContext';
 import { useTranslation } from '../i18n';
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, AlignmentType, WidthType, BorderStyle } from 'docx';
 
 export function ProjectPlanner() {
   const { state, dispatch } = usePlatform();
@@ -104,6 +103,7 @@ export function ProjectPlanner() {
   // Structured Word Report Export via Docx Library
   const exportDOCX = async () => {
     try {
+      const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, AlignmentType, WidthType, BorderStyle } = await import('docx');
       const doc = new Document({
         sections: [{
           properties: {},
