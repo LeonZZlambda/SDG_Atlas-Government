@@ -58,7 +58,8 @@ export function Onboarding() {
           textAlign: 'center',
           padding: '40px var(--space-xl)',
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          background: 'rgba(255, 255, 255, 0.92)'
         }}
       >
         <div style={{

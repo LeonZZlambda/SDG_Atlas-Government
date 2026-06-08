@@ -2,7 +2,7 @@ import { useState } from 'preact/hooks';
 import { usePlatform } from '../context/PlatformContext';
 import { useTranslation } from '../i18n';
 import { SDG_METADATA, getCoefficient } from '../utils/projectGenerator';
-import { getSDGIcon } from './ODSIcons';
+import { getSDGIcon, getIcon } from './ODSIcons';
 
 const SIZE   = 560;
 const CX     = SIZE / 2;
@@ -10,6 +10,12 @@ const CY     = SIZE / 2;
 const RING   = 210;
 const R_ON   = 20;
 const R_OFF  = 10;
+
+// Responsive text sizes using clamp
+const TEXT_PROJ = 'clamp(6px, 1.2vw, 8px)';
+const TEXT_ODS  = 'clamp(5px, 1vw, 7px)';
+const TEXT_TOOLTIP = 'clamp(7px, 1.3vw, 9px)';
+const TEXT_INACTIVE = 'clamp(5px, 1vw, 7px)';
 
 function nodeCoords(id: number) {
   const angle = ((id - 1) / 17) * 2 * Math.PI - Math.PI / 2;
@@ -106,20 +112,31 @@ export function ODSMap() {
             const col   = edgeColor(e.val);
             const dash  = e.val < 0 ? '6 4' : undefined;
             const w     = e.val < 0 ? 1.5 : e.val > 0.5 ? 2.5 : 1.2;
+            const hitAreaWidth = 20; // Larger invisible hit area for easier clicking
 
             return (
-              <path
-                key={i}
-                d={`M ${a.x} ${a.y} Q ${CX} ${CY} ${b.x} ${b.y}`}
-                fill="none"
-                stroke={col}
-                strokeWidth={isHov ? w + 2 : w}
-                strokeDasharray={dash}
-                opacity={isDim ? 0.08 : isHov ? 1 : edgeOpacity(e.val)}
-                style={{ cursor: 'pointer', transition: 'opacity 0.2s, stroke-width 0.2s' }}
-                onMouseEnter={() => { setActiveEdge(e); setActiveNode(null); }}
-                onMouseLeave={() => setActiveEdge(null)}
-              />
+              <g key={i}>
+                {/* Invisible hit area - wider stroke for easier clicking */}
+                <path
+                  d={`M ${a.x} ${a.y} Q ${CX} ${CY} ${b.x} ${b.y}`}
+                  fill="none"
+                  stroke="transparent"
+                  strokeWidth={hitAreaWidth}
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => { setActiveEdge(e); setActiveNode(null); }}
+                  onMouseLeave={() => setActiveEdge(null)}
+                />
+                {/* Visible edge */}
+                <path
+                  d={`M ${a.x} ${a.y} Q ${CX} ${CY} ${b.x} ${b.y}`}
+                  fill="none"
+                  stroke={col}
+                  strokeWidth={isHov ? w + 2 : w}
+                  strokeDasharray={dash}
+                  opacity={isDim ? 0.08 : isHov ? 1 : edgeOpacity(e.val)}
+                  style={{ cursor: 'pointer', transition: 'opacity 0.2s, stroke-width 0.2s', pointerEvents: 'none' }}
+                />
+              </g>
             );
           })}
 
@@ -129,11 +146,11 @@ export function ODSMap() {
             filter="url(#node-glow)"
           />
           <text x={CX} y={CY - 5} textAnchor="middle" fill="#fff"
-            style={{ fontSize: '8px', fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '0.1em' }}>
+            style={{ fontSize: TEXT_PROJ, fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '0.1em' }}>
             PROJ
           </text>
           <text x={CX} y={CY + 8} textAnchor="middle" fill="rgba(255,255,255,0.7)"
-            style={{ fontSize: '7px', fontFamily: 'var(--font-sans)' }}>
+            style={{ fontSize: TEXT_ODS, fontFamily: 'var(--font-sans)' }}>
             {selected.length} ODS
           </text>
 
@@ -199,7 +216,7 @@ export function ODSMap() {
                 {!on && (
                   <text x={x} y={y + 1} textAnchor="middle" dominantBaseline="middle"
                     fill="var(--text-muted)"
-                    style={{ fontSize: '7px', fontWeight: 700, fontFamily: 'var(--font-heading)', pointerEvents: 'none' }}>
+                    style={{ fontSize: TEXT_INACTIVE, fontWeight: 700, fontFamily: 'var(--font-heading)', pointerEvents: 'none' }}>
                     {ods.id}
                   </text>
                 )}
@@ -217,7 +234,7 @@ export function ODSMap() {
                       />
                       <text x={boxX + boxW / 2} y={boxY + 13} textAnchor="middle"
                         fill="var(--text-primary)"
-                        style={{ fontSize: '9px', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
+                        style={{ fontSize: TEXT_TOOLTIP, fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
                         {label.length > 20 ? label.slice(0, 20) + '…' : label}
                       </text>
                     </g>
@@ -289,7 +306,9 @@ export function ODSMap() {
             </>
           ) : (
             <div className="map-info-empty">
-              <span className="map-info-empty-icon">🕸️</span>
+              <div style={{ width: 'clamp(32px, 5vw, 40px)', height: 'clamp(32px, 5vw, 40px)', margin: '0 auto 12px' }}>
+                {getIcon('sliders', '', 'var(--text-muted)')}
+              </div>
               <span className="map-info-ods-number">
                 {lang === 'pt' ? 'Mapa de Sinergias' : lang === 'es' ? 'Mapa de Sinergias' : 'Synergy Map'}
               </span>
@@ -316,7 +335,7 @@ export function ODSMap() {
           ))}
 
           <div className="clay-card map-hint-card">
-            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>
+            <p style={{ fontSize: 'clamp(11px, 1.2vw, 12px)', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>
               {t('map_explanation')}
             </p>
           </div>

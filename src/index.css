@@ -1244,6 +1244,29 @@ a { color: var(--accent-color); text-decoration: none; }
   margin-right: auto;
 }
 
+/* Mobile: smaller SVG container */
+@media (max-width: 480px) {
+  .map-svg-card {
+    max-width: 100%;
+    padding: var(--space-sm);
+  }
+}
+
+/* Large desktop: larger SVG container */
+@media (min-width: 1920px) {
+  .map-svg-card {
+    max-width: 640px;
+  }
+}
+
+/* 4K: even larger SVG container */
+@media (min-width: 2560px) {
+  .map-svg-card {
+    max-width: 800px;
+    padding: var(--space-xl);
+  }
+}
+
 /* Info row abaixo do SVG */
 .map-info-row {
   display: grid;
@@ -1254,6 +1277,30 @@ a { color: var(--accent-color); text-decoration: none; }
 
 @media (max-width: 700px) {
   .map-info-row { grid-template-columns: 1fr; }
+}
+
+/* Mobile: adjust stats column */
+@media (max-width: 480px) {
+  .map-stats-col {
+    min-width: auto;
+  }
+  .map-stat-value {
+    font-size: 1.25rem;
+  }
+}
+
+/* Large desktop: larger stat values */
+@media (min-width: 1920px) {
+  .map-stat-value {
+    font-size: clamp(1.5rem, 2vw, 1.75rem);
+  }
+}
+
+/* 4K: even larger stat values */
+@media (min-width: 2560px) {
+  .map-stat-value {
+    font-size: clamp(1.75rem, 2.2vw, 2rem);
+  }
 }
 
 /* Card de detalhe — mesma altura da coluna de stats */
