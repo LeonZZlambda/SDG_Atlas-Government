@@ -8,9 +8,15 @@ interface ODSCardProps {
   color: string;
   isSelected: boolean;
   onToggle: () => void;
+  analyticalMetadata?: {
+    complexity: 'Baixa' | 'Média' | 'Alta';
+    systemicImpact: 'Baixo' | 'Médio' | 'Elevado';
+    institutionalDependency: 'Baixa' | 'Média' | 'Alta';
+    strongSynergies: number[];
+  };
 }
 
-export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle }: ODSCardProps) {
+export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle, analyticalMetadata }: ODSCardProps) {
   // Keypress handler for keyboard accessibility (space/enter to toggle checkbox)
   const handleKeyDown = (e: any) => {
     if (e.key === ' ' || e.key === 'Enter') {
@@ -102,13 +108,82 @@ export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle }: OD
         </h3>
         <p style={{
           fontSize: 'clamp(10px, 1.1vw, 11px)',
-          margin: 0,
+          margin: '0 0 12px 0',
           lineHeight: 1.4,
           color: isSelected ? 'rgba(255,255,255,0.82)' : 'var(--text-secondary)',
         }}>
           {shortDesc}
         </p>
       </div>
+
+      {/* Metadados Analíticos — sempre na base do card */}
+      {analyticalMetadata && (
+        <div style={{
+          marginTop: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          padding: '10px',
+          borderRadius: '8px',
+          background: isSelected ? 'var(--bg-glass)' : 'var(--bg-tertiary)',
+          fontSize: 'clamp(9px, 1vw, 10px)',
+          lineHeight: 1.3
+        }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600 }}>
+                Complexidade:
+              </span>
+              <span style={{ 
+                color: analyticalMetadata.complexity === 'Alta' ? '#dc2626' : 
+                       analyticalMetadata.complexity === 'Média' ? '#d97706' : '#059669',
+                fontWeight: 700 
+              }}>
+                {analyticalMetadata.complexity}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600 }}>
+                Impacto Sistêmico:
+              </span>
+              <span style={{ 
+                color: analyticalMetadata.systemicImpact === 'Elevado' ? '#059669' : 
+                       analyticalMetadata.systemicImpact === 'Médio' ? '#d97706' : '#4f46e5',
+                fontWeight: 700 
+              }}>
+                {analyticalMetadata.systemicImpact}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600 }}>
+                Dep. Institucional:
+              </span>
+              <span style={{ 
+                color: analyticalMetadata.institutionalDependency === 'Alta' ? '#dc2626' : 
+                       analyticalMetadata.institutionalDependency === 'Média' ? '#d97706' : '#059669',
+                fontWeight: 700 
+              }}>
+                {analyticalMetadata.institutionalDependency}
+              </span>
+            </div>
+            {analyticalMetadata.strongSynergies.length > 0 && (
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center',
+                marginTop: '4px',
+                paddingTop: '6px',
+                boxShadow: 'inset 0 1px 0 var(--border-dark)'
+              }}>
+                <span style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600 }}>
+                  Sinergia Forte:
+                </span>
+                <span style={{ color: '#059669', fontWeight: 700 }}>
+                  ODS {analyticalMetadata.strongSynergies.join(', ')}
+                </span>
+              </div>
+            )}
+        </div>
+      )}
     </motion.div>
   );
 }

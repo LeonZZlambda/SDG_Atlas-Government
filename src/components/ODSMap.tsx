@@ -44,6 +44,7 @@ export function ODSMap() {
 
   const [activeNode, setActiveNode] = useState<number | null>(null);
   const [activeEdge, setActiveEdge] = useState<{ a: number; b: number; val: number } | null>(null);
+  const [clickedNode, setClickedNode] = useState<number | null>(null);
 
   const selected = state.selectedOds;
 
@@ -55,9 +56,16 @@ export function ODSMap() {
   const strongSynergies = edges.filter(e => e.val > 0.5).length;
   const conflicts       = edges.filter(e => e.val < 0).length;
 
-  const infoOds  = activeNode ? SDG_METADATA.find(o => o.id === activeNode) : null;
+  const infoOds  = (clickedNode || activeNode) ? SDG_METADATA.find(o => o.id === (clickedNode || activeNode)) : null;
   const infoOdsA = activeEdge ? SDG_METADATA.find(o => o.id === activeEdge.a) : null;
   const infoOdsB = activeEdge ? SDG_METADATA.find(o => o.id === activeEdge.b) : null;
+
+  const handleNodeClick = (id: number) => {
+    if (selected.includes(id)) {
+      setClickedNode(clickedNode === id ? null : id);
+      setActiveNode(id);
+    }
+  };
 
 
   return (
@@ -109,6 +117,7 @@ export function ODSMap() {
             const b = nodeCoords(e.b);
             const isHov = activeEdge?.a === e.a && activeEdge?.b === e.b;
             const isDim = !!activeEdge && !isHov;
+            const isConnectedToClicked = clickedNode && (e.a === clickedNode || e.b === clickedNode);
             const col   = edgeColor(e.val);
             const dash  = e.val < 0 ? '6 4' : undefined;
             const w     = e.val < 0 ? 1.5 : e.val > 0.5 ? 2.5 : 1.2;
@@ -131,9 +140,9 @@ export function ODSMap() {
                   d={`M ${a.x} ${a.y} Q ${CX} ${CY} ${b.x} ${b.y}`}
                   fill="none"
                   stroke={col}
-                  strokeWidth={isHov ? w + 2 : w}
+                  strokeWidth={isConnectedToClicked ? w + 3 : isHov ? w + 2 : w}
                   strokeDasharray={dash}
-                  opacity={isDim ? 0.08 : isHov ? 1 : edgeOpacity(e.val)}
+                  opacity={clickedNode ? (isConnectedToClicked ? 1 : 0.15) : (isDim ? 0.08 : isHov ? 1 : edgeOpacity(e.val))}
                   style={{ cursor: 'pointer', transition: 'opacity 0.2s, stroke-width 0.2s', pointerEvents: 'none' }}
                 />
               </g>
@@ -159,6 +168,7 @@ export function ODSMap() {
             const { x, y } = nodeCoords(ods.id);
             const on     = selected.includes(ods.id);
             const isHov  = activeNode === ods.id;
+            const isClicked = clickedNode === ods.id;
             const isDim  = !!activeEdge && !selected.includes(ods.id);
             const r      = on ? R_ON : R_OFF;
 
@@ -172,11 +182,12 @@ export function ODSMap() {
                 }}
                 onMouseEnter={() => { if (on) { setActiveNode(ods.id); setActiveEdge(null); } }}
                 onMouseLeave={() => setActiveNode(null)}
+                onClick={() => handleNodeClick(ods.id)}
                 role={on ? 'button' : undefined}
                 aria-label={on ? `SDG ${ods.id}: ${ods.name[lang]}` : undefined}
               >
-                {/* Glow halo on hover */}
-                {on && isHov && (
+                {/* Glow halo on hover or click */}
+                {on && (isHov || isClicked) && (
                   <circle cx={x} cy={y} r={r + 8}
                     fill={ods.color} opacity={0.2}
                     filter="url(#node-glow)"
@@ -188,11 +199,11 @@ export function ODSMap() {
                   cx={x} cy={y} r={r}
                   fill={on ? ods.color : 'var(--bg-tertiary)'}
                   stroke={on ? 'rgba(255,255,255,0.35)' : 'var(--border-dark)'}
-                  strokeWidth={on ? 1.5 : 1}
+                  strokeWidth={on ? (isClicked ? 2.5 : 1.5) : 1}
                   opacity={on ? 1 : 0.4}
                   style={{
                     transition: 'r 0.0s',
-                    filter: on && isHov ? `drop-shadow(0 0 6px ${ods.color})` : 'none',
+                    filter: on && (isHov || isClicked) ? `drop-shadow(0 0 6px ${ods.color})` : 'none',
                   }}
                 />
 

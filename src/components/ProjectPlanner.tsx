@@ -326,7 +326,7 @@ export function ProjectPlanner() {
             type="button"
             onClick={handleSave}
             className="clay-button clay-button-primary"
-            style={{ width: '100%', padding: '14px', marginTop: '10px' }}
+            style={{ width: '100%', marginTop: '10px' }}
           >
             💾 {t('planner_save_btn')}
           </button>
@@ -365,20 +365,24 @@ export function ProjectPlanner() {
           <div className="clay-card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <h3 style={{ fontSize: 'clamp(1rem, 1.8vw, 1.125rem)', marginBottom: '8px' }}>Centro de Exportação</h3>
             
-            <button type="button" onClick={exportDOCX} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%' }}>
-              📄 {t('export_docx')}
+            <button type="button" onClick={exportDOCX} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%', display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '16px', height: '16px' }}>{getIcon('document', '', 'currentColor')}</div>
+              {t('export_docx')}
             </button>
             
-            <button type="button" onClick={handlePrint} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%' }}>
-              🖨️ {t('export_pdf')}
+            <button type="button" onClick={handlePrint} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%', display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '16px', height: '16px' }}>{getIcon('printer', '', 'currentColor')}</div>
+              {t('export_pdf')}
             </button>
             
-            <button type="button" onClick={exportCSV} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%' }}>
-              📊 {t('export_csv')}
+            <button type="button" onClick={exportCSV} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%', display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '16px', height: '16px' }}>{getIcon('chart', '', 'currentColor')}</div>
+              {t('export_csv')}
             </button>
             
-            <button type="button" onClick={exportJSON} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%' }}>
-              📁 {t('export_json')}
+            <button type="button" onClick={exportJSON} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%', display: 'flex', alignItems: 'center' }}>
+              <div style={{ width: '16px', height: '16px' }}>{getIcon('archive', '', 'currentColor')}</div>
+              {t('export_json')}
             </button>
           </div>
         </div>

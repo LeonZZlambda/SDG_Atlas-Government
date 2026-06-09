@@ -2,12 +2,20 @@ import { usePlatform } from '../context/PlatformContext';
 import { useTranslation } from '../i18n';
 import { getIcon } from './ODSIcons';
 import { motion } from 'framer-motion';
+import { generateEmergentInsights } from '../utils/emergentBehavior';
+import { generateInfrastructureDependencies } from '../utils/infrastructureDependencies';
 
 export function ImpactCalculator() {
   const { state, dispatch } = usePlatform();
   const { t } = useTranslation();
 
   const project = state.currentProject;
+  
+  // Generate emergent insights based on current inputs
+  const emergentInsights = generateEmergentInsights(state.inputs);
+  
+  // Generate infrastructure dependencies
+  const infrastructureDependencies = generateInfrastructureDependencies(state.inputs, state.selectedOds);
 
   if (!project) {
     return (
@@ -49,15 +57,15 @@ export function ImpactCalculator() {
 
       <div className="grid-calc-2col">
         
-        {/* LEFT PANEL: SIMULATION SLIDERS */}
-        <div className="clay-card" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <h3 style={{ fontSize: 'clamp(1.1rem, 2vw, 1.25rem)', paddingBottom: '10px', marginBottom: '20px', boxShadow: 'inset 0 -1px 0 var(--border-dark)' }}>
+          {/* LEFT PANEL: SIMULATION SLIDERS - Secondary Controls */}
+        <div className="clay-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', opacity: 0.9 }}>
+          <h3 style={{ fontSize: 'clamp(0.95rem, 1.5vw, 1rem)', paddingBottom: '8px', marginBottom: '16px', boxShadow: 'inset 0 -1px 0 var(--border-dark)', color: 'var(--text-secondary)' }}>
             Parâmetros do Cenário
           </h3>
 
           {/* Slider 1: Beneficiaries */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(11px, 1.2vw, 13px)', fontWeight: 700 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 600, color: 'var(--text-secondary)' }}>
               <label htmlFor="input-beneficiaries">{t('calculator_input_beneficiaries')}</label>
               <span style={{ color: 'var(--accent-color)' }}>{state.inputs.beneficiaries}</span>
             </div>
@@ -70,12 +78,13 @@ export function ImpactCalculator() {
               value={state.inputs.beneficiaries}
               onChange={(e: any) => handleSliderChange('beneficiaries', parseInt(e.target.value))}
               className="clay-range"
+              style={{ opacity: 0.85 }}
             />
           </div>
 
           {/* Slider 2: Budget */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(11px, 1.2vw, 13px)', fontWeight: 700 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 600, color: 'var(--text-secondary)' }}>
               <label htmlFor="input-budget">{t('calculator_input_budget')}</label>
               <span style={{ color: 'var(--accent-color)' }}>${state.inputs.budget.toLocaleString()}</span>
             </div>
@@ -88,12 +97,13 @@ export function ImpactCalculator() {
               value={state.inputs.budget}
               onChange={(e: any) => handleSliderChange('budget', parseInt(e.target.value))}
               className="clay-range"
+              style={{ opacity: 0.85 }}
             />
           </div>
 
           {/* Slider 3: Duration */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(11px, 1.2vw, 13px)', fontWeight: 700 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 600, color: 'var(--text-secondary)' }}>
               <label htmlFor="input-duration">{t('calculator_input_duration')}</label>
               <span style={{ color: 'var(--accent-color)' }}>{state.inputs.duration} Meses</span>
             </div>
@@ -106,12 +116,13 @@ export function ImpactCalculator() {
               value={state.inputs.duration}
               onChange={(e: any) => handleSliderChange('duration', parseInt(e.target.value))}
               className="clay-range"
+              style={{ opacity: 0.85 }}
             />
           </div>
 
           {/* Slider 4: Team size */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(11px, 1.2vw, 13px)', fontWeight: 700 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 600, color: 'var(--text-secondary)' }}>
               <label htmlFor="input-teamsize">{t('calculator_input_team')}</label>
               <span style={{ color: 'var(--accent-color)' }}>{state.inputs.teamSize} Colaboradores</span>
             </div>
@@ -124,12 +135,13 @@ export function ImpactCalculator() {
               value={state.inputs.teamSize}
               onChange={(e: any) => handleSliderChange('teamSize', parseInt(e.target.value))}
               className="clay-range"
+              style={{ opacity: 0.85 }}
             />
           </div>
 
           {/* Dropdown 5: Risk Level */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <label htmlFor="input-risk" style={{ fontSize: 'clamp(11px, 1.2vw, 13px)', fontWeight: 700, color: 'var(--text-secondary)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <label htmlFor="input-risk" style={{ fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 600, color: 'var(--text-secondary)' }}>
               {t('calculator_input_risk')}
             </label>
             <select
@@ -137,6 +149,7 @@ export function ImpactCalculator() {
               value={state.inputs.riskLevel}
               onChange={(e: any) => handleSliderChange('riskLevel', parseFloat(e.target.value))}
               className="clay-input"
+              style={{ opacity: 0.85 }}
             >
               <option value={0.15}>{t('calculator_risk_low')}</option>
               <option value={0.45}>{t('calculator_risk_medium')}</option>
@@ -148,12 +161,140 @@ export function ImpactCalculator() {
         {/* RIGHT PANEL: ANIMATED INDICATORS & EXPLANATIONS */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
+          {/* Emergent Behavior Insights - Primary Analysis Zone */}
+          {emergentInsights.length > 0 && (
+            <div className="clay-card" style={{
+              padding: '20px',
+              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(245, 158, 11, 0.08) 100%)',
+              boxShadow: 'var(--clay-card-shadow), 0 4px 12px rgba(239, 68, 68, 0.15)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ width: '20px', height: '20px' }}>
+                  {getIcon('warning', '', '#ef4444')}
+                </div>
+                <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#ef4444', letterSpacing: '-0.5px' }}>
+                  Comportamento Emergente Detectado
+                </h3>
+              </div>
+              {emergentInsights.map((insight, index) => (
+                <div key={index} style={{ 
+                  marginBottom: index < emergentInsights.length - 1 ? '16px' : '0',
+                  paddingBottom: index < emergentInsights.length - 1 ? '16px' : '0',
+                  boxShadow: index < emergentInsights.length - 1 ? 'inset 0 -1px 0 var(--border-dark)' : 'none'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                    <span style={{ 
+                      fontSize: '10px', 
+                      padding: '4px 10px', 
+                      borderRadius: '8px',
+                      background: insight.severity === 'critical' ? '#ef4444' : 
+                                 insight.severity === 'high' ? '#f97316' : 
+                                 insight.severity === 'medium' ? '#f59e0b' : '#6366f1',
+                      color: '#fff',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2), inset -1px -1px 2px rgba(0,0,0,0.2), inset 1px 1px 2px rgba(255,255,255,0.2)'
+                    }}>
+                      {insight.severity}
+                    </span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {insight.title}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '6px 0 0 0', lineHeight: 1.5 }}>
+                    {insight.description}
+                  </p>
+                  {insight.recommendation && (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                      <div style={{ width: '12px', height: '12px', flexShrink: 0, marginTop: 1 }}>
+                        {getIcon('lightbulb', '', '#10b981')}
+                      </div>
+                      <p style={{ fontSize: '10px', color: '#10b981', margin: '4px 0 0 0', fontStyle: 'italic' }}>
+                        {insight.recommendation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Infrastructure Dependencies - Primary Analysis Zone */}
+          {infrastructureDependencies.length > 0 && (
+            <div className="clay-card" style={{
+              padding: '20px',
+              background: 'linear-gradient(135deg, rgba(245, 158, 11, 0.08) 0%, rgba(251, 191, 36, 0.08) 100%)',
+              boxShadow: 'var(--clay-card-shadow), 0 4px 12px rgba(245, 158, 11, 0.15)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ width: '20px', height: '20px' }}>
+                  {getIcon('wrench', '', '#f59e0b')}
+                </div>
+                <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#f59e0b', letterSpacing: '-0.5px' }}>
+                  Dependências Críticas Detectadas
+                </h3>
+              </div>
+              {infrastructureDependencies.slice(0, 4).map((dep, index) => (
+                <div key={index} style={{ 
+                  marginBottom: index < Math.min(4, infrastructureDependencies.length) - 1 ? '16px' : '0',
+                  paddingBottom: index < Math.min(4, infrastructureDependencies.length) - 1 ? '16px' : '0',
+                  boxShadow: index < Math.min(4, infrastructureDependencies.length) - 1 ? 'inset 0 -1px 0 var(--border-dark)' : 'none'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                    <span style={{ 
+                      fontSize: '10px', 
+                      padding: '4px 10px', 
+                      borderRadius: '8px',
+                      background: dep.severity === 'critical' ? '#ef4444' : 
+                                 dep.severity === 'high' ? '#f97316' : 
+                                 dep.severity === 'medium' ? '#f59e0b' : '#6366f1',
+                      color: '#fff',
+                      fontWeight: 800,
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.2), inset -1px -1px 2px rgba(0,0,0,0.2), inset 1px 1px 2px rgba(255,255,255,0.2)'
+                    }}>
+                      {dep.severity}
+                    </span>
+                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {dep.description}
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '6px 0 0 0', lineHeight: 1.5 }}>
+                    {dep.rationale}
+                  </p>
+                  {dep.mitigation && (
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                      <div style={{ width: '12px', height: '12px', flexShrink: 0, marginTop: 1 }}>
+                        {getIcon('lightbulb', '', '#10b981')}
+                      </div>
+                      <p style={{ fontSize: '10px', color: '#10b981', margin: '4px 0 0 0', fontStyle: 'italic' }}>
+                        {dep.mitigation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {infrastructureDependencies.length > 4 && (
+                <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '8px 0 0 0', fontStyle: 'italic' }}>
+                  +{infrastructureDependencies.length - 4} dependências adicionais detectadas
+                </p>
+              )}
+            </div>
+          )}
+          
           {/* Main Gauges Card */}
           <div className="clay-card" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1.8fr', gap: '20px', alignItems: 'center' }}>
             {/* 1. Main radial impact gauge */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
               <div style={{ position: 'relative', width: 'clamp(100px, 12vw, 120px)', height: 'clamp(100px, 12vw, 120px)' }}>
                 <svg width="100%" height="100%" viewBox="0 0 120 120" style={{ transform: 'rotate(-90deg)' }}>
+                  <defs>
+                    <filter id="circleShadow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.2"/>
+                    </filter>
+                  </defs>
                   <circle cx="60" cy="60" r={strokeRadius} fill="transparent" stroke="var(--bg-tertiary)" strokeWidth="10" />
                   <motion.circle
                     cx="60"
@@ -166,6 +307,7 @@ export function ImpactCalculator() {
                     animate={{ strokeDashoffset: strokeOffset }}
                     transition={{ duration: 0.4 }}
                     strokeLinecap="round"
+                    filter="url(#circleShadow)"
                   />
                 </svg>
                 <div style={{
@@ -177,7 +319,7 @@ export function ImpactCalculator() {
                   justifyContent: 'center'
                 }}>
                   <span style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontWeight: 800 }}>{project.overallImpactScore}</span>
-                  <span style={{ fontSize: 'clamp(9px, 1.1vw, 10px)', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Index</span>
+                  <span style={{ fontSize: 'clamp(9px, 1.1vw, 10px)', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Índice Sistêmico</span>
                 </div>
               </div>
               <h4 style={{ fontSize: 'clamp(11px, 1.3vw, 13px)', marginTop: '12px', fontWeight: 700 }}>
@@ -193,9 +335,9 @@ export function ImpactCalculator() {
                   <span>{t('calculator_score_reach')}</span>
                   <span>~{project.reachEstimated}</span>
                 </div>
-                <div style={{ width: '100%', height: '8px', borderRadius: '4px', background: 'var(--bg-tertiary)', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '8px', borderRadius: '8px', background: 'var(--bg-tertiary)', overflow: 'hidden', boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.1), inset 2px 2px 4px rgba(255,255,255,0.1)' }}>
                   <motion.div
-                    style={{ height: '100%', background: 'linear-gradient(90deg, #3b82f6, #06b6d4)' }}
+                    style={{ height: '100%', background: 'linear-gradient(90deg, #3b82f6, #06b6d4)', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }}
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(100, (project.reachEstimated / 5500) * 100)}%` }}
                     transition={{ duration: 0.4 }}
@@ -206,12 +348,12 @@ export function ImpactCalculator() {
               {/* Sustainability scale */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.2vw, 12px)', fontWeight: 700 }}>
-                  <span>{t('calculator_score_sustainability')}</span>
+                  <span>Índice de Viabilidade</span>
                   <span>{project.sustainabilityIndex}/100</span>
                 </div>
-                <div style={{ width: '100%', height: '8px', borderRadius: '4px', background: 'var(--bg-tertiary)', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '8px', borderRadius: '8px', background: 'var(--bg-tertiary)', overflow: 'hidden', boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.1), inset 2px 2px 4px rgba(255,255,255,0.1)' }}>
                   <motion.div
-                    style={{ height: '100%', background: 'linear-gradient(90deg, #10b981, #10b981)' }}
+                    style={{ height: '100%', background: 'linear-gradient(90deg, #10b981, #10b981)', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }}
                     initial={{ width: 0 }}
                     animate={{ width: `${project.sustainabilityIndex}%` }}
                     transition={{ duration: 0.4 }}
@@ -222,12 +364,12 @@ export function ImpactCalculator() {
               {/* SDG Alignment scale */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.2vw, 12px)', fontWeight: 700 }}>
-                  <span>{t('calculator_score_alignment')}</span>
+                  <span>Impacto Sistêmico</span>
                   <span>{project.alignmentScore}/100</span>
                 </div>
-                <div style={{ width: '100%', height: '8px', borderRadius: '4px', background: 'var(--bg-tertiary)', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '8px', borderRadius: '8px', background: 'var(--bg-tertiary)', overflow: 'hidden', boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.1), inset 2px 2px 4px rgba(255,255,255,0.1)' }}>
                   <motion.div
-                    style={{ height: '100%', background: 'linear-gradient(90deg, #8b5cf6, #ec4899)' }}
+                    style={{ height: '100%', background: 'linear-gradient(90deg, #8b5cf6, #ec4899)', borderRadius: '6px', boxShadow: '0 2px 4px rgba(0,0,0,0.15)' }}
                     initial={{ width: 0 }}
                     animate={{ width: `${project.alignmentScore}%` }}
                     transition={{ duration: 0.4 }}
@@ -257,7 +399,7 @@ export function ImpactCalculator() {
             </div>
           </div>
 
-          {/* Tradeoffs List Warnings */}
+          {/* Tradeoffs List Warnings with Severity Classification */}
           <div className="clay-card" style={{
             background: project.tradeoffs.length > 0 ? 'rgba(239,68,68,0.04)' : 'rgba(16,185,129,0.04)',
             boxShadow: project.tradeoffs.length > 0 
@@ -270,29 +412,52 @@ export function ImpactCalculator() {
             {project.tradeoffs.length > 0 ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {project.tradeoffs.map((tradeoff: string, i: number) => {
+                  // Extract SDG pairs from tradeoff string
+                  const sdgMatch = tradeoff.match(/ODS (\d+) × ODS (\d+)/);
+                  const severity = i === 0 ? 'ALTO RISCO' : i === 1 ? 'MÉDIO RISCO' : 'RISCO MODERADO';
+                  
                   // Split on ". Recomendado:" / ". Recommended:" / ". Recomendado:"
                   const splitRx = /\. (Recomendado|Recommended|Recomendado):/;
                   const parts = tradeoff.split(splitRx);
                   const title = parts[0];
                   const rec   = parts.length >= 3 ? parts[2].trim() : null;
                   const recLabel = tradeoff.includes('Recommended') ? 'Recommended' : 'Recomendado';
+                  
                   return (
                     <div key={i} style={{
-                      background: 'rgba(239,68,68,0.06)',
-                      border: '1px solid rgba(239,68,68,0.18)',
-                      borderRadius: '12px',
-                      padding: '12px 14px',
                       display: 'flex',
                       flexDirection: 'column',
                       gap: '6px',
+                      padding: '10px',
+                      borderRadius: '8px',
+                      background: 'var(--bg-glass)',
+                      fontSize: 'clamp(9px, 1vw, 10px)',
+                      lineHeight: 1.3
                     }}>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}>
-                          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                          <line x1="12" y1="9" x2="12" y2="13"/>
-                          <line x1="12" y1="17" x2="12.01" y2="17"/>
-                        </svg>
-                        <span style={{ fontSize: 'clamp(10px, 1.2vw, 12px)', fontWeight: 700, color: '#ef4444', lineHeight: 1.4 }}>{title}</span>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '8px' }}>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', flex: 1 }}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" style={{ flexShrink: 0, marginTop: 1 }}>
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <line x1="12" y1="9" x2="12" y2="13"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17"/>
+                          </svg>
+                          <span style={{ fontSize: 'clamp(10px, 1.2vw, 12px)', fontWeight: 700, color: '#ef4444', lineHeight: 1.4 }}>{title}</span>
+                        </div>
+                        {sdgMatch && (
+                          <span style={{ 
+                            fontSize: '9px', 
+                            padding: '3px 8px', 
+                            borderRadius: '4px',
+                            background: severity === 'ALTO RISCO' ? '#ef4444' : severity === 'MÉDIO RISCO' ? '#f59e0b' : '#6366f1',
+                            color: '#fff',
+                            fontWeight: 800,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            flexShrink: 0
+                          }}>
+                            {severity}
+                          </span>
+                        )}
                       </div>
                       {rec && (
                         <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', paddingLeft: '22px' }}>

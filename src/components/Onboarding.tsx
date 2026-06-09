@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePlatform } from '../context/PlatformContext';
 import { useTranslation } from '../i18n';
+import { getIcon } from './ODSIcons';
 
 export function Onboarding() {
   const { state, dispatch } = usePlatform();
@@ -27,19 +28,19 @@ export function Onboarding() {
     {
       title: t('onboarding_step1_title'),
       desc: t('onboarding_step1_desc'),
-      icon: '🌍',
+      icon: 'chart',
       color: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)'
     },
     {
       title: t('onboarding_step2_title'),
       desc: t('onboarding_step2_desc'),
-      icon: '📊',
+      icon: 'sliders',
       color: 'linear-gradient(135deg, #10b981 0%, #047857 100%)'
     },
     {
       title: t('onboarding_step3_title'),
       desc: t('onboarding_step3_desc'),
-      icon: '⚙️',
+      icon: 'settings',
       color: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)'
     }
   ];
@@ -110,12 +111,13 @@ export function Onboarding() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 'clamp(32px, 6vw, 48px)',
               marginBottom: '24px',
               boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), inset -4px -4px 8px rgba(0,0,0,0.2), inset 4px 4px 8px rgba(255,255,255,0.3)',
               border: '1px solid rgba(255,255,255,0.2)'
             }}>
-              {currentSlide.icon}
+              <div style={{ width: '48px', height: '48px' }}>
+                {getIcon(currentSlide.icon, '', '#fff')}
+              </div>
             </div>
 
             <h2 style={{ fontSize: 'clamp(1.25rem, 2.5vw, 1.5rem)', marginBottom: '16px', fontFamily: 'var(--font-heading)' }}>

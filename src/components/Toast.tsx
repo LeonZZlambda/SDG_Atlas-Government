@@ -1,6 +1,7 @@
 import { useEffect } from 'preact/hooks';
 import { AnimatePresence, motion } from 'framer-motion';
 import { usePlatform } from '../context/PlatformContext';
+import { getIcon } from './ODSIcons';
 
 export function Toast() {
   const { state, dispatch } = usePlatform();
@@ -62,12 +63,12 @@ function ToastCard({ toast, onClose }: { toast: { id: string; message: string; t
       role="alert"
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <span style={{ fontSize: 'clamp(14px, 1.5vw, 18px)', fontWeight: 'bold' }}>
-          {toast.type === 'success' && '✓'}
-          {toast.type === 'warning' && '⚠'}
-          {toast.type === 'error' && '✗'}
-          {toast.type === 'info' && 'ℹ'}
-        </span>
+        <div style={{ width: '18px', height: '18px' }}>
+          {toast.type === 'success' && getIcon('check', '', '#10b981')}
+          {toast.type === 'warning' && getIcon('warning', '', '#f59e0b')}
+          {toast.type === 'error' && getIcon('x', '', '#ef4444')}
+          {toast.type === 'info' && getIcon('info', '', '#6366f1')}
+        </div>
         <p style={{ margin: 0, color: 'inherit', fontSize: 'clamp(12px, 1.2vw, 14px)', fontWeight: 500 }}>
           {toast.message}
         </p>

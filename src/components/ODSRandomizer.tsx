@@ -108,7 +108,7 @@ export function ODSRandomizer() {
             onClick={startShuffle}
             disabled={isDrawing}
             className="clay-button clay-button-primary"
-            style={{ width: '100%', padding: '14px', marginTop: '10px' }}
+            style={{ width: '100%', marginTop: '10px' }}
           >
             {isDrawing ? t('shuffler_drawing_active') : drawnIds.length > 0 ? t('shuffler_reshuffle_btn') : t('shuffler_start_btn')}
           </button>

@@ -78,6 +78,15 @@ export function Dashboard() {
           </h3>
           <div style={{ overflowX: 'auto', paddingBottom: '10px' }}>
             <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 35}`} style={{ width: '100%', minWidth: '480px', height: '100%', overflow: 'visible' }}>
+              <defs>
+                <filter id="clayShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="4" stdDeviation="3" floodOpacity="0.15"/>
+                </filter>
+                <linearGradient id="barGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="currentColor" stopOpacity="0.95"/>
+                  <stop offset="100%" stopColor="currentColor" stopOpacity="0.85"/>
+                </linearGradient>
+              </defs>
               {/* Grid lines */}
               <line x1={gap} y1={chartHeight} x2={chartWidth - gap} y2={chartHeight} stroke="var(--border-dark)" strokeWidth="1.5" />
               <line x1={gap} y1={chartHeight / 2} x2={chartWidth - gap} y2={chartHeight / 2} stroke="var(--border-dark)" strokeWidth="0.5" strokeDasharray="4 4" />
@@ -98,9 +107,10 @@ export function Dashboard() {
                       y={y}
                       width={barWidth}
                       height={barHeight}
-                      rx={4}
+                      rx={6}
                       fill={count > 0 ? odsColor : 'var(--bg-tertiary)'}
                       opacity={count > 0 ? 0.95 : 0.25}
+                      filter={count > 0 ? 'url(#clayShadow)' : 'none'}
                       style={{ transition: 'all 0.3s ease' }}
                     />
                     {/* Tooltip value on top */}
@@ -197,7 +207,8 @@ export function Dashboard() {
                           fontWeight: 700,
                           display: 'flex',
                           alignItems: 'center',
-                          gap: '6px'
+                          gap: '6px',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2), inset -1px -1px 2px rgba(0,0,0,0.2), inset 1px 1px 2px rgba(255,255,255,0.2)'
                         }}
                       >
                         <div style={{ width: '12px', height: '12px' }}>
@@ -220,11 +231,26 @@ export function Dashboard() {
                   marginTop: '10px',
                   boxShadow: 'inset 0 1px 0 var(--border-dark)'
                 }}>
-                  <span>💰 Orçamento: <strong>${p.inputs.budget.toLocaleString()}</strong></span>
-                  <span>👥 Beneficiários: <strong>{p.inputs.beneficiaries}</strong></span>
-                  <span>📅 Duração: <strong>{p.inputs.duration}m</strong></span>
-                  <span>👥 Equipe: <strong>{p.inputs.teamSize}</strong></span>
-                  <span>⚡ Impacto: <strong>{p.generatedData.overallImpactScore}/100</strong></span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '14px', height: '14px' }}>{getIcon('budget', '', 'currentColor')}</div>
+                    Orçamento: <strong>${p.inputs.budget.toLocaleString()}</strong>
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '14px', height: '14px' }}>{getIcon('users', '', 'currentColor')}</div>
+                    Beneficiários: <strong>{p.inputs.beneficiaries}</strong>
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '14px', height: '14px' }}>{getIcon('calendar', '', 'currentColor')}</div>
+                    Duração: <strong>{p.inputs.duration}m</strong>
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '14px', height: '14px' }}>{getIcon('team', '', 'currentColor')}</div>
+                    Equipe: <strong>{p.inputs.teamSize}</strong>
+                  </span>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '14px', height: '14px' }}>{getIcon('lightning', '', 'currentColor')}</div>
+                    Impacto: <strong>{p.generatedData.overallImpactScore}/100</strong>
+                  </span>
                 </div>
               </div>
             ))}
