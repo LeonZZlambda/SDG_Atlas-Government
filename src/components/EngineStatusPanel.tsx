@@ -1065,17 +1065,6 @@ export function EngineStatusPanel() {
     return systemicInfluence;
   };
 
-  // Calculate uncertainty range based on confidence level
-  const calculateUncertainty = (score: number, confidence: 'high' | 'medium' | 'low'): { min: number; max: number; margin: number } => {
-    const margins = { high: 5, medium: 10, low: 15 };
-    const margin = margins[confidence];
-    return {
-      min: Math.max(0, score - margin),
-      max: Math.min(100, score + margin),
-      margin,
-    };
-  };
-
   // Generate Explanation Panels
   const generateExplanationPanels = () => {
     const panels: ExplanationPanel[] = [];
