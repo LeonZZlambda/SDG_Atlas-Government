@@ -3,14 +3,8 @@ import type { ComponentChildren } from 'preact';
 import { useContext, useReducer, useEffect } from 'preact/hooks';
 import i18next from '../i18n';
 import { generateProject } from '../utils/projectGenerator';
-
-export interface ProjectInputs {
-  budget: number;
-  beneficiaries: number;
-  duration: number;
-  teamSize: number;
-  riskLevel: number;
-}
+import type { ProjectInputs, GeneratedProjectData } from '../types/project';
+import { Logger } from '../utils/logger';
 
 export interface SavedProject {
   id: string;
@@ -18,7 +12,7 @@ export interface SavedProject {
   summary: string;
   odsIds: number[];
   inputs: ProjectInputs;
-  generatedData: any;
+  generatedData: GeneratedProjectData;
   createdAt: string;
 }
 
@@ -37,7 +31,7 @@ export interface PlatformState {
   savedProjects: SavedProject[];
   toasts: ToastItem[];
   onboardingCompleted: boolean;
-  currentProject: any;
+  currentProject: GeneratedProjectData | null;
 }
 
 type PlatformAction =
@@ -73,7 +67,7 @@ const getInitialState = (): PlatformState => {
     const raw = localStorage.getItem('sdg_platform_projects');
     if (raw) savedProjects = JSON.parse(raw);
   } catch (e) {
-    console.error('Failed parsing local projects:', e);
+    Logger.error('Failed parsing local projects:', e);
   }
 
   const selectedOds = [3, 4, 11]; // default sample ODS selection (Health, Education, Sustainable Cities)

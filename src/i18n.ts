@@ -111,7 +111,140 @@ const resources = {
       toast_theme_changed: 'Tema atualizado com sucesso!',
       toast_lang_changed: 'Idioma atualizado com sucesso!',
       toast_selection_cleared: 'Seleção limpa.',
-      toast_project_deleted: 'Projeto removido do histórico.'
+      toast_project_deleted: 'Projeto removido do histórico.',
+
+      // ODSGrid complexity warnings
+      complexity_high: 'Complexidade Operacional Elevada Detectada',
+      complexity_moderate: 'Complexidade Operacional Moderada',
+      complexity_analysis: 'Análise de Complexidade',
+      complexity_high_1: 'Coordenação interinstitucional necessária para múltiplos ODS',
+      complexity_high_2: 'Escopo amplo pode reduzir viabilidade de implementação',
+      complexity_high_3: 'Requer alocação significativa de recursos e capacitação técnica',
+      complexity_moderate_1: 'Coordenação moderada entre instituições recomendada',
+      complexity_moderate_2: 'Planejamento detalhado para integração de ODS',
+      complexity_low: 'Escalo manejável com potencial para implementação focada.',
+      systemic_analysis_detected: 'Análise Sistêmica Detectada',
+      ods_selected_max: 'ODS Selecionados (Max 17)',
+
+      // ODSMap
+      map_aligned: '✓ Alinhado ao Projeto',
+      map_aligned_to_project: '✓ Alinhado ao Projeto',
+      map_not_selected: '✗ Não selecionado',
+      map_interrelation: 'Interrelação de Metas',
+      map_tradeoff_desc: 'Compromisso identificado. O progresso em uma meta pode pressionar a outra.',
+      map_synergy_desc: 'Sinergia positiva. O avanço em uma meta apoia a outra mutuamente.',
+      map_synergy_title: 'Mapa de Sinergias',
+      map_hover_hint: 'Passe o cursor sobre os nós ou linhas para ver a análise de sinergias.',
+
+      // ConfidenceIndicator
+      confidence_label: 'Nível de confiança estatística',
+      confidence_high: 'Alta',
+      confidence_medium: 'Média',
+      confidence_low: 'Baixa',
+
+      // Dashboard
+      dashboard_analysis_tools: 'Ferramentas de Análise Avançada',
+      dashboard_analysis_tools_desc: 'Simulação de cenários, comparação de projetos e análise de sensibilidade',
+      dashboard_network_viz: 'Visualização de Rede de Impacto',
+      dashboard_network_viz_desc: 'Análise sistêmica de interações, sinergias e dependências entre os ODS selecionados',
+      dashboard_widgets: 'Widgets de Análise Estratégica',
+      dashboard_high_complexity: 'Maior Complexidade',
+
+      // ProjectComparison
+      comparison_title: 'Comparação de Projetos',
+      comparison_subtitle: 'Análise comparativa de múltiplos projetos para decisão estratégica',
+      comparison_auto_analysis: 'Análise Automática',
+
+      // ODSCard
+      card_complexity: 'Complexidade',
+      card_high: 'Alta',
+      card_medium: 'Média',
+      card_low: 'Baixa',
+
+      // ProjectPlanner export
+      export_csv_field: 'Campo',
+      export_csv_detail: 'Detalhe',
+      export_csv_project: 'Projeto',
+      export_csv_summary: 'Resumo',
+      export_csv_ods_aligned: 'ODS Alinhados',
+      export_csv_budget: 'Orçamento Alocado (USD)',
+      export_csv_beneficiaries: 'Público Beneficiado',
+      export_csv_duration: 'Duração (Meses)',
+      export_csv_team: 'Equipe de Execução',
+      export_csv_impact: 'Índice de Impacto',
+      export_csv_sustainability: 'Escala de Sustentabilidade',
+      export_csv_alignment: 'Alinhamento ODS',
+      export_docx_title: 'Relatório Executivo de Alinhamento ODS & Modelagem de Impacto',
+      export_docx_executive_summary: '1. Resumo Executivo',
+      export_docx_metrics_title: '2. Parâmetros de Recursos e Metas de Impacto',
+      export_docx_metric_param: 'Métrica/Parâmetro',
+      export_docx_metric_value: 'Valor Estimado',
+      export_docx_operational_duration: 'Duração Operacional',
+      export_docx_months: 'Meses',
+      export_docx_impact_index: 'Índice de Impacto Geral',
+      export_docx_risks_partners: '4. Riscos, Mitigações e Redes de Parcerias',
+      export_docx_team_size: 'Tamanho de Equipe',
+      export_docx_collaborators: 'Colaboradores',
+      export_docx_partners: 'Parceiros Recomendados',
+      export_docx_initiatives: '3. Iniciativas Operacionais ODS',
+      export_docx_initiative: 'Iniciativa',
+
+      // Dashboard remaining
+      dashboard_selected_sdgs: 'ODS selecionados',
+      dashboard_strong_synergies: 'Sinergias fortes',
+      dashboard_avg_synergy: 'Sinergia média',
+      dashboard_tradeoffs: 'Trade-offs',
+      dashboard_network_density: 'Densidade de rede',
+      dashboard_clustering: 'Agrupamento',
+      dashboard_centralization: 'Centralização',
+
+      // ProjectPlanner remaining
+      planner_operational_metrics: 'Métricas Operacionais',
+      planner_kpis_recommended: 'KPIs Recomendados',
+      planner_cost_per_beneficiary: 'Custo por Beneficiário',
+      planner_impact_index: 'Índice de Impacto',
+      planner_sustainability: 'Sustentabilidade',
+      planner_alignment_ods: 'Alinhamento ODS',
+      planner_estimated_reach: 'Alcance Estimado',
+      planner_export_center: 'Centro de Exportação',
+      planner_risk_ods: 'Risco ODS',
+
+      // ProjectComparison insights
+      comparison_higher_impact: 'demonstra impacto sistêmico significativamente superior',
+      comparison_higher_resilience: 'apresenta maior resiliência sistêmica e viabilidade de longo prazo',
+      comparison_lower_coordination: 'possui menor complexidade de coordenação',
+      comparison_more_efficient: 'é mais eficiente em termos de recursos (orçamento menor)',
+      comparison_select_projects: 'Selecionar Projetos (mínimo 2)',
+      comparison_comparative_metrics: 'Métricas Comparativas',
+      comparison_metric: 'Métrica',
+      comparison_radar_chart: 'Gráfico Radar Multidimensional',
+
+      // SDGNetworkVisualization
+      network_influence: 'Influência',
+
+      // ODSCard
+      card_complexity_low: 'Baixa',
+      card_complexity_medium: 'Média',
+      card_complexity_high: 'Alta',
+      card_impact_low: 'Baixo',
+      card_impact_medium: 'Médio',
+      card_impact_high: 'Elevado',
+      card_dependency_low: 'Baixa',
+      card_dependency_medium: 'Média',
+      card_dependency_high: 'Alta',
+
+      // ImpactCalculator
+      calculator_scenario_params: 'Parâmetros do Cenário',
+      calculator_critical_dependencies: 'Dependências Críticas Detectadas',
+      calculator_additional_dependencies: 'dependências adicionais detectadas',
+      calculator_systemic_index: 'Índice Sistêmico',
+      calculator_feasibility_index: 'Índice de Viabilidade',
+      calculator_high_risk: 'ALTO RISCO',
+      calculator_medium_risk: 'MÉDIO RISCO',
+      calculator_moderate_risk: 'RISCO MODERADO',
+
+      // ODSRandomizer
+      randomizer_draw_params: 'Parâmetros de Sorteio'
     }
   },
   'en-US': {
@@ -220,7 +353,92 @@ const resources = {
       toast_theme_changed: 'Theme updated successfully!',
       toast_lang_changed: 'Language updated successfully!',
       toast_selection_cleared: 'Selection cleared.',
-      toast_project_deleted: 'Project removed from history.'
+      toast_project_deleted: 'Project removed from history.',
+
+      // ODSGrid complexity warnings
+      complexity_high: 'High Operational Complexity Detected',
+      complexity_moderate: 'Moderate Operational Complexity',
+      complexity_analysis: 'Complexity Analysis',
+      complexity_high_1: 'Inter-institutional coordination required for multiple SDGs',
+      complexity_high_2: 'Broad scope may reduce implementation viability',
+      complexity_high_3: 'Requires significant resource allocation and technical capacity',
+      complexity_moderate_1: 'Moderate coordination between institutions recommended',
+      complexity_moderate_2: 'Detailed planning for SDG integration',
+      complexity_low: 'Manageable scale with potential for focused implementation.',
+      systemic_analysis_detected: 'Systemic Analysis Detected',
+      ods_selected_max: 'SDGs Selected (Max 17)',
+
+      // ODSMap
+      map_aligned: '✓ Aligned to Project',
+      map_aligned_to_project: '✓ Aligned to Project',
+      map_not_selected: '✗ Not selected',
+      map_interrelation: 'Goal Interrelation',
+      map_tradeoff_desc: 'Tradeoff identified. Progress on one goal may pressure the other.',
+      map_synergy_desc: 'Positive synergy. Progress on one goal mutually supports the other.',
+      map_synergy_title: 'Synergy Map',
+      map_hover_hint: 'Hover over nodes or edges to explore synergies and conflicts.',
+
+      // ConfidenceIndicator
+      confidence_label: 'Statistical confidence level',
+      confidence_high: 'High',
+      confidence_medium: 'Medium',
+      confidence_low: 'Low',
+
+      // Dashboard
+      dashboard_analysis_tools: 'Advanced Analysis Tools',
+      dashboard_analysis_tools_desc: 'Scenario simulation, project comparison, and sensitivity analysis',
+      dashboard_network_viz: 'Impact Network Visualization',
+      dashboard_network_viz_desc: 'Systemic analysis of interactions, synergies, and dependencies between selected SDGs',
+      dashboard_widgets: 'Strategic Analysis Widgets',
+      dashboard_high_complexity: 'Highest Complexity',
+
+      // ProjectComparison
+      comparison_title: 'Project Comparison',
+      comparison_subtitle: 'Comparative analysis of multiple projects for strategic decision-making',
+      comparison_auto_analysis: 'Automated Analysis',
+
+      // ODSCard
+      card_complexity: 'Complexity',
+      card_high: 'High',
+      card_medium: 'Medium',
+      card_low: 'Low',
+
+      // ProjectPlanner export
+      export_csv_field: 'Field',
+      export_csv_detail: 'Detail',
+      export_csv_project: 'Project',
+      export_csv_summary: 'Summary',
+      export_csv_ods_aligned: 'Aligned SDGs',
+      export_csv_budget: 'Allocated Budget (USD)',
+      export_csv_beneficiaries: 'Beneficiaries Reached',
+      export_csv_duration: 'Duration (Months)',
+      export_csv_team: 'Execution Team',
+      export_csv_impact: 'Impact Index',
+      export_csv_sustainability: 'Sustainability Scale',
+      export_csv_alignment: 'SDG Alignment',
+      export_docx_title: 'SDG Alignment & Impact Modeling Executive Report',
+      export_docx_executive_summary: '1. Executive Summary',
+      export_docx_metrics_title: '2. Resource Parameters & Impact Goals',
+      export_docx_metric_param: 'Metric/Parameter',
+      export_docx_metric_value: 'Estimated Value',
+      export_docx_operational_duration: 'Operational Duration',
+      export_docx_months: 'Months',
+      export_docx_impact_index: 'Overall Impact Index',
+      export_docx_risks_partners: '4. Risks, Mitigations & Partnership Networks',
+      export_docx_team_size: 'Team Size',
+      export_docx_collaborators: 'Collaborators',
+      export_docx_partners: 'Recommended Partners',
+      export_docx_initiatives: '3. SDG Operational Initiatives',
+      export_docx_initiative: 'Initiative',
+
+      // Dashboard remaining
+      dashboard_selected_sdgs: 'Selected SDGs',
+      dashboard_strong_synergies: 'Strong synergies',
+      dashboard_avg_synergy: 'Average synergy',
+      dashboard_tradeoffs: 'Trade-offs',
+      dashboard_network_density: 'Network density',
+      dashboard_clustering: 'Clustering',
+      dashboard_centralization: 'Centralization'
     }
   },
   'es-ES': {

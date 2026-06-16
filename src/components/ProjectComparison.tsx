@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { usePlatform } from '../context/PlatformContext';
+import { useTranslation } from '../i18n';
 
 interface ProjectComparisonProps {
   onClose: () => void;
@@ -159,6 +160,7 @@ function RadarChart({ projects, metrics }: RadarChartProps) {
 
 export function ProjectComparison({ onClose }: ProjectComparisonProps) {
   const { state } = usePlatform();
+  const { t } = useTranslation();
   const [selectedProjects, setSelectedProjects] = useState<Set<string>>(new Set());
   const projects = state.savedProjects;
 
@@ -211,27 +213,27 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
     const p2Budget = p2.inputs?.budget || 0;
 
     if (p1Impact > p2Impact + 10) {
-      insights.push(`${p1.name} demonstra impacto sistêmico significativamente superior (${p1Impact} vs ${p2Impact}).`);
+      insights.push(`${p1.name} ${t('comparison_higher_impact')} (${p1Impact} vs ${p2Impact}).`);
     } else if (p2Impact > p1Impact + 10) {
-      insights.push(`${p2.name} demonstra impacto sistêmico significativamente superior (${p2Impact} vs ${p1Impact}).`);
+      insights.push(`${p2.name} ${t('comparison_higher_impact')} (${p2Impact} vs ${p1Impact}).`);
     }
 
     if (p1Sustain > p2Sustain + 10) {
-      insights.push(`${p1.name} apresenta maior resiliência sistêmica e viabilidade de longo prazo.`);
+      insights.push(`${p1.name} ${t('comparison_higher_resilience')}.`);
     } else if (p2Sustain > p1Sustain + 10) {
-      insights.push(`${p2.name} apresenta maior resiliência sistêmica e viabilidade de longo prazo.`);
+      insights.push(`${p2.name} ${t('comparison_higher_resilience')}.`);
     }
 
     if (p1Tradeoffs < p2Tradeoffs) {
-      insights.push(`${p1.name} possui menor complexidade de coordenação (${p1Tradeoffs} vs ${p2Tradeoffs} trade-offs).`);
+      insights.push(`${p1.name} ${t('comparison_lower_coordination')} (${p1Tradeoffs} vs ${p2Tradeoffs} trade-offs).`);
     } else if (p2Tradeoffs < p1Tradeoffs) {
-      insights.push(`${p2.name} possui menor complexidade de coordenação (${p2Tradeoffs} vs ${p1Tradeoffs} trade-offs).`);
+      insights.push(`${p2.name} ${t('comparison_lower_coordination')} (${p2Tradeoffs} vs ${p1Tradeoffs} trade-offs).`);
     }
 
     if (p1Budget < p2Budget) {
-      insights.push(`${p1.name} é mais eficiente em termos de recursos (orçamento menor).`);
+      insights.push(`${p1.name} ${t('comparison_more_efficient')}.`);
     } else {
-      insights.push(`${p2.name} é mais eficiente em termos de recursos (orçamento menor).`);
+      insights.push(`${p2.name} ${t('comparison_more_efficient')}.`);
     }
 
     return insights;
@@ -265,9 +267,9 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>Comparação de Projetos</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>{t('comparison_title')}</h2>
             <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '4px 0 0' }}>
-              Análise comparativa de múltiplos projetos para decisão estratégica
+              {t('comparison_subtitle')}
             </p>
           </div>
           <button
@@ -287,7 +289,7 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
 
         {/* Project Selection */}
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>Selecionar Projetos (mínimo 2)</div>
+          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{t('comparison_select_projects')}</div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
             {projects.map(project => (
               <button
@@ -316,7 +318,7 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
           <>
             {/* Side-by-side Metrics Table */}
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>Métricas Comparativas</div>
+              <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{t('comparison_comparative_metrics')}</div>
               <div style={{
                 borderRadius: 12,
                 background: 'var(--bg-glass)',
@@ -326,7 +328,7 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
                 <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <thead>
                     <tr style={{ background: 'rgba(0,0,0,0.03)' }}>
-                      <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700 }}>Métrica</th>
+                      <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700 }}>{t('comparison_metric')}</th>
                       {selectedProjectsList.map(p => (
                         <th key={p.id} style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>
                           {p.name}
@@ -369,7 +371,7 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
             {/* Automated Insights */}
             {insights && insights.length > 0 && (
               <div style={{ marginBottom: 20 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>Análise Automática</div>
+                <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{t('comparison_auto_analysis')}</div>
                 <div style={{
                   padding: '12px 16px',
                   borderRadius: 12,
@@ -387,7 +389,7 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
 
             {/* Radar Chart */}
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>Gráfico Radar Multidimensional</div>
+              <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{t('comparison_radar_chart')}</div>
               <div style={{
                 height: 350,
                 borderRadius: 12,

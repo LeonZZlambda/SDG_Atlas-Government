@@ -53,12 +53,12 @@ export function ODSGrid() {
   return (
     <section>
       <div className="page-header">
-        <h2>{t('selection_title')}</h2>
+        <h1>{t('selection_title')}</h1>
         <p>{t('selection_subtitle')}</p>
       </div>
 
       {/* Control Buttons Panel */}
-      <div className="clay-card" style={{
+      <div className="clay-card" role="toolbar" aria-label="SDG selection controls" style={{
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
@@ -82,20 +82,20 @@ export function ODSGrid() {
             {state.selectedOds.length}
           </span>
           <span style={{ fontSize: 'clamp(12px, 1.4vw, 14px)', fontWeight: 600, color: 'var(--text-secondary)' }}>
-            ODS Selecionados (Max 17)
+            {t('ods_selected_max')}
           </span>
         </div>
 
         {/* Buttons list */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <button type="button" onClick={selectAll} className="clay-button" style={{ fontSize: 'clamp(10px, 1.1vw, 12px)', padding: '6px 12px', opacity: 0.8 }}>
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }} role="group" aria-label="Selection actions">
+          <button type="button" onClick={selectAll} className="clay-button" aria-label={t('selection_all_btn')} style={{ fontSize: 'clamp(10px, 1.1vw, 12px)', padding: '6px 12px', opacity: 0.8 }}>
             {t('selection_all_btn')}
           </button>
-          <button type="button" onClick={clearSelection} className="clay-button" style={{ fontSize: 'clamp(10px, 1.1vw, 12px)', padding: '6px 12px', opacity: 0.8 }}>
+          <button type="button" onClick={clearSelection} className="clay-button" aria-label={t('selection_clear_btn')} style={{ fontSize: 'clamp(10px, 1.1vw, 12px)', padding: '6px 12px', opacity: 0.8 }}>
             {t('selection_clear_btn')}
           </button>
-          <button type="button" onClick={randomizeSelection} className="clay-button" style={{ fontSize: 'clamp(10px, 1.1vw, 12px)', padding: '6px 12px', opacity: 0.8, display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ width: '14px', height: '14px' }}>
+          <button type="button" onClick={randomizeSelection} className="clay-button" aria-label={t('selection_random_btn')} style={{ fontSize: 'clamp(10px, 1.1vw, 12px)', padding: '6px 12px', opacity: 0.8, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ width: '14px', height: '14px' }} aria-hidden="true">
               {getIcon('search', '', 'currentColor')}
             </div>
             {t('selection_random_btn')}
@@ -105,7 +105,7 @@ export function ODSGrid() {
 
       {/* Governance Friction Warnings */}
       {state.selectedOds.length > 0 && (
-        <div className="clay-card" style={{
+        <div className="clay-card" role="alert" aria-live="polite" style={{
           marginBottom: '24px',
           padding: '16px 20px',
           background: state.selectedOds.length > 8 ? 'rgba(239, 68, 68, 0.08)' : 
@@ -117,27 +117,27 @@ export function ODSGrid() {
               {getIcon(state.selectedOds.length > 8 ? 'warning' : state.selectedOds.length > 5 ? 'lightning' : 'info', '', state.selectedOds.length > 8 ? '#ef4444' : state.selectedOds.length > 5 ? '#f59e0b' : '#6366f1')}
             </div>
             <div>
-              <h4 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: state.selectedOds.length > 8 ? '#ef4444' : state.selectedOds.length > 5 ? '#f59e0b' : '#6366f1' }}>
-                {state.selectedOds.length > 8 ? 'Complexidade Operacional Elevada Detectada' : 
-                 state.selectedOds.length > 5 ? 'Complexidade Operacional Moderada' : 
-                 'Análise de Complexidade'}
-              </h4>
+              <h3 style={{ fontSize: '13px', fontWeight: 700, marginBottom: '8px', color: state.selectedOds.length > 8 ? '#ef4444' : state.selectedOds.length > 5 ? '#f59e0b' : '#6366f1' }}>
+                {state.selectedOds.length > 8 ? t('complexity_high') : 
+                 state.selectedOds.length > 5 ? t('complexity_moderate') : 
+                 t('complexity_analysis')}
+              </h3>
               {state.selectedOds.length > 8 && (
                 <ul style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 0 16px', lineHeight: 1.6 }}>
-                  <li>Coordenação interinstitucional necessária para múltiplos ODS</li>
-                  <li>Escopo amplo pode reduzir viabilidade de implementação</li>
-                  <li>Requer alocação significativa de recursos e capacitação técnica</li>
+                  <li>{t('complexity_high_1')}</li>
+                  <li>{t('complexity_high_2')}</li>
+                  <li>{t('complexity_high_3')}</li>
                 </ul>
               )}
               {state.selectedOds.length > 5 && state.selectedOds.length <= 8 && (
                 <ul style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0 0 0 16px', lineHeight: 1.6 }}>
-                  <li>Coordenação moderada entre instituições recomendada</li>
-                  <li>Planejamento detalhado para integração de ODS</li>
+                  <li>{t('complexity_moderate_1')}</li>
+                  <li>{t('complexity_moderate_2')}</li>
                 </ul>
               )}
               {state.selectedOds.length <= 5 && (
                 <p style={{ fontSize: '11px', color: 'var(--text-secondary)', margin: '0', lineHeight: 1.6 }}>
-                  Escalo manejável com potencial para implementação focada.
+                  {t('complexity_low')}
                 </p>
               )}
             </div>
@@ -157,9 +157,9 @@ export function ODSGrid() {
             <div style={{ width: '20px', height: '20px' }}>
               {getIcon('chart', '', '#6366f1')}
             </div>
-            <h3 style={{ fontSize: '16px', fontWeight: 800, color: '#6366f1', letterSpacing: '-0.5px' }}>
-              Análise Sistêmica Detectada
-            </h3>
+            <h2 style={{ fontSize: '16px', fontWeight: 800, color: '#6366f1', letterSpacing: '-0.5px' }}>
+              {t('systemic_analysis_detected')}
+            </h2>
           </div>
           {systemicInsights.map((insight, index) => (
             <div key={index} style={{ 
@@ -194,7 +194,7 @@ export function ODSGrid() {
       )}
 
       {/* Grid displays SDGs */}
-      <motion.div layout className="ods-grid">
+      <motion.div layout className="ods-grid" aria-label="Sustainable Development Goals">
         {SDG_METADATA.map(ods => (
           <ODSCard
             key={ods.id}
@@ -210,7 +210,7 @@ export function ODSGrid() {
       </motion.div>
 
       {/* Proceed Navigation Button */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', flexWrap: 'wrap' }}>
+      <div role="navigation" aria-label="Page navigation" style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', flexWrap: 'wrap' }}>
         {state.selectedOds.length > 0 && (
           <button
             type="button"

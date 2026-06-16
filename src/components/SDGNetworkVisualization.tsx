@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { SDG_METADATA } from '../utils/projectGenerator';
 import { type Graph } from '../utils/graphAlgorithms';
+import { useTranslation } from '../i18n';
 
 interface SDGNetworkVisualizationProps {
   selectedSDGs: number[];
@@ -28,6 +29,7 @@ export function SDGNetworkVisualization({
   betweennessCentrality,
   pageRank,
 }: SDGNetworkVisualizationProps) {
+  const { t } = useTranslation();
   const [nodes, setNodes] = useState<Node[]>([]);
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -273,7 +275,7 @@ export function SDGNetworkVisualization({
                 fill="#10b981"
                 fontSize={9}
               >
-                Influência: {node.influence.toFixed(1)}/100
+                {t('network_influence')}: {node.influence.toFixed(1)}/100
               </text>
               <text
                 x={node.x + node.radius + 20}

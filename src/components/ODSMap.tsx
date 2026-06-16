@@ -281,15 +281,15 @@ export function ODSMap() {
               >
                 <span style={{ color: selected.includes(infoOds.id) ? infoOds.color : 'var(--text-muted)' }}>
                   {selected.includes(infoOds.id)
-                    ? (lang === 'pt' ? '✓ Alinhado ao Projeto' : lang === 'es' ? '✓ Alineado al Proyecto' : '✓ Aligned to Project')
-                    : (lang === 'pt' ? '✗ Não selecionado' : lang === 'es' ? '✗ No seleccionado' : '✗ Not selected')}
+                    ? t('map_aligned_to_project')
+                    : t('map_not_selected')}
                 </span>
               </div>
             </>
           ) : infoOdsA && infoOdsB && activeEdge ? (
             <>
               <p className="map-info-edge-label">
-                {lang === 'pt' ? 'Interrelação de Metas' : lang === 'es' ? 'Interrelación de Metas' : 'Goal Interrelation'}
+                {t('map_interrelation')}
               </p>
               <div className="map-info-edge-pair">
                 <div className="map-info-edge-node" style={{ background: infoOdsA.color }}>ODS {infoOdsA.id}</div>
@@ -298,7 +298,7 @@ export function ODSMap() {
               </div>
               <div className="map-info-edge-score-row">
                 <span className="map-info-edge-score-label">
-                  {lang === 'pt' ? 'Coeficiente:' : lang === 'es' ? 'Coeficiente:' : 'Coefficient:'}
+                  Coeficiente:
                 </span>
                 <span className="map-info-edge-score-value"
                   style={{ background: activeEdge.val < 0 ? '#ef4444' : '#10b981' }}>
@@ -307,12 +307,8 @@ export function ODSMap() {
               </div>
               <p className="map-info-edge-desc">
                 {activeEdge.val < 0
-                  ? (lang === 'pt' ? 'Compromisso identificado. O progresso em uma meta pode pressionar a outra.'
-                    : lang === 'es' ? 'Compromiso identificado. El progreso en una meta puede presionar la otra.'
-                    : 'Tradeoff identified. Progress on one goal may pressure the other.')
-                  : (lang === 'pt' ? 'Sinergia positiva. O avanço em uma meta apoia a outra mutuamente.'
-                    : lang === 'es' ? 'Sinergia positiva. El avance en una meta apoya a la otra mutuamente.'
-                    : 'Positive synergy. Progress on one goal mutually supports the other.')}
+                  ? t('map_tradeoff_desc')
+                  : t('map_synergy_desc')}
               </p>
             </>
           ) : (
@@ -321,12 +317,10 @@ export function ODSMap() {
                 {getIcon('sliders', '', 'var(--text-muted)')}
               </div>
               <span className="map-info-ods-number">
-                {lang === 'pt' ? 'Mapa de Sinergias' : lang === 'es' ? 'Mapa de Sinergias' : 'Synergy Map'}
+                {t('map_synergy_title')}
               </span>
               <p className="map-info-empty-text">
-                {lang === 'pt' ? 'Passe o cursor sobre os nós ou linhas para ver a análise de sinergias.'
-                  : lang === 'es' ? 'Pase el cursor sobre los nodos o líneas para ver el análisis.'
-                  : 'Hover over nodes or edges to explore synergies and conflicts.'}
+                {t('map_hover_hint')}
               </p>
             </div>
           )}
@@ -335,8 +329,8 @@ export function ODSMap() {
         {/* Stats cards */}
         <div className="map-stats-col">
           {[
-            { val: selected.length, color: 'var(--accent-color)', label: lang === 'pt' ? 'ODS selecionados' : lang === 'es' ? 'ODS seleccionados' : 'Selected SDGs' },
-            { val: strongSynergies, color: '#10b981',             label: lang === 'pt' ? 'Sinergias fortes' : lang === 'es' ? 'Sinergias fuertes' : 'Strong synergies' },
+            { val: selected.length, color: 'var(--accent-color)', label: t('dashboard_selected_sdgs') },
+            { val: strongSynergies, color: '#10b981',             label: t('dashboard_strong_synergies') },
             { val: conflicts,       color: '#ef4444',             label: lang === 'pt' ? 'Conflitos' : lang === 'es' ? 'Conflictos' : 'Conflicts' },
           ].map(s => (
             <div key={s.label} className="clay-card map-stat-card">

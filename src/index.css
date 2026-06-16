@@ -3,6 +3,10 @@
    Senior UI/UX Implementation
    ============================================================ */
 
+/* Import component styles */
+@import './components/TabSkeleton.css';
+@import './components/ResponsiveContainer.css';
+
 /* ── Design Tokens ─────────────────────────────────────── */
 :root {
   /* Typography — system stack avoids web-font CLS and external requests */

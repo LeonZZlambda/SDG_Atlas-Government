@@ -60,7 +60,7 @@ export function ImpactCalculator() {
           {/* LEFT PANEL: SIMULATION SLIDERS - Secondary Controls */}
         <div className="clay-card" style={{ display: 'flex', flexDirection: 'column', gap: '16px', opacity: 0.9 }}>
           <h3 style={{ fontSize: 'clamp(0.95rem, 1.5vw, 1rem)', paddingBottom: '8px', marginBottom: '16px', boxShadow: 'inset 0 -1px 0 var(--border-dark)', color: 'var(--text-secondary)' }}>
-            Parâmetros do Cenário
+            {t('calculator_scenario_params')}
           </h3>
 
           {/* Slider 1: Beneficiaries */}
@@ -232,7 +232,7 @@ export function ImpactCalculator() {
                   {getIcon('wrench', '', '#f59e0b')}
                 </div>
                 <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#f59e0b', letterSpacing: '-0.5px' }}>
-                  Dependências Críticas Detectadas
+                  {t('calculator_critical_dependencies')}
                 </h3>
               </div>
               {infrastructureDependencies.slice(0, 4).map((dep, index) => (
@@ -278,7 +278,7 @@ export function ImpactCalculator() {
               ))}
               {infrastructureDependencies.length > 4 && (
                 <p style={{ fontSize: '10px', color: 'var(--text-muted)', margin: '8px 0 0 0', fontStyle: 'italic' }}>
-                  +{infrastructureDependencies.length - 4} dependências adicionais detectadas
+                  +{infrastructureDependencies.length - 4} {t('calculator_additional_dependencies')}
                 </p>
               )}
             </div>
@@ -319,7 +319,7 @@ export function ImpactCalculator() {
                   justifyContent: 'center'
                 }}>
                   <span style={{ fontSize: 'clamp(18px, 3vw, 24px)', fontWeight: 800 }}>{project.overallImpactScore}</span>
-                  <span style={{ fontSize: 'clamp(9px, 1.1vw, 10px)', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Índice Sistêmico</span>
+                  <span style={{ fontSize: 'clamp(9px, 1.1vw, 10px)', color: 'var(--text-muted)', textTransform: 'uppercase' }}>{t('calculator_systemic_index')}</span>
                 </div>
               </div>
               <h4 style={{ fontSize: 'clamp(11px, 1.3vw, 13px)', marginTop: '12px', fontWeight: 700 }}>
@@ -348,7 +348,7 @@ export function ImpactCalculator() {
               {/* Sustainability scale */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.2vw, 12px)', fontWeight: 700 }}>
-                  <span>Índice de Viabilidade</span>
+                  <span>{t('calculator_feasibility_index')}</span>
                   <span>{project.sustainabilityIndex}/100</span>
                 </div>
                 <div style={{ width: '100%', height: '8px', borderRadius: '8px', background: 'var(--bg-tertiary)', overflow: 'hidden', boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.1), inset 2px 2px 4px rgba(255,255,255,0.1)' }}>
@@ -412,7 +412,7 @@ export function ImpactCalculator() {
                 {project.tradeoffs.map((tradeoff: string, i: number) => {
                   // Extract SDG pairs from tradeoff string
                   const sdgMatch = tradeoff.match(/ODS (\d+) × ODS (\d+)/);
-                  const severity = i === 0 ? 'ALTO RISCO' : i === 1 ? 'MÉDIO RISCO' : 'RISCO MODERADO';
+                  const severity = i === 0 ? t('calculator_high_risk') : i === 1 ? t('calculator_medium_risk') : t('calculator_moderate_risk');
                   
                   // Split on ". Recomendado:" / ". Recommended:" / ". Recomendado:"
                   const splitRx = /\. (Recomendado|Recommended|Recomendado):/;
@@ -446,7 +446,7 @@ export function ImpactCalculator() {
                             fontSize: '9px', 
                             padding: '3px 8px', 
                             borderRadius: '4px',
-                            background: severity === 'ALTO RISCO' ? '#ef4444' : severity === 'MÉDIO RISCO' ? '#f59e0b' : '#6366f1',
+                            background: severity === t('calculator_high_risk') ? '#ef4444' : severity === t('calculator_medium_risk') ? '#f59e0b' : '#6366f1',
                             color: '#fff',
                             fontWeight: 800,
                             textTransform: 'uppercase',

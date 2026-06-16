@@ -142,8 +142,8 @@ export function Dashboard() {
       {/* Analysis Tools */}
       <div className="clay-card" style={{ marginBottom: '24px', padding: '20px' }}>
         <div style={{ marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '4px' }}>Ferramentas de Análise Avançada</h3>
-          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Simulação de cenários, comparação de projetos e análise de sensibilidade</p>
+          <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '4px' }}>{t('dashboard_analysis_tools')}</h3>
+          <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{t('dashboard_analysis_tools_desc')}</p>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           <button
@@ -199,8 +199,8 @@ export function Dashboard() {
       {state.selectedOds.length > 0 && (
         <div className="clay-card" style={{ marginBottom: '24px', padding: '20px' }}>
           <div style={{ marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '4px' }}>Visualização de Rede de Impacto</h3>
-            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Análise sistêmica de interações, sinergias e dependências entre os ODS selecionados</p>
+            <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '4px' }}>Viiuãlização    Rede de ImpacRdcto</h3>
+            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Análise sisnêmica ie intersçõee, sinergiss e depenêêicias cnare ds ODS selectonaaoõsinergias e dependências entre os ODS selecionados</p>
           </div>
           
           {/* Build graph for visualization */}
@@ -372,7 +372,7 @@ export function Dashboard() {
                   <line x1="8" y1="21" x2="16" y2="21" />
                   <line x1="12" y1="17" x2="12" y2="21" />
                 </svg>
-                Widgets de Análise Estratégica
+                {t('dashboard_widgets')}
               </h4>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
                 {/* Top Synergy Drivers */}
@@ -407,7 +407,7 @@ export function Dashboard() {
                   border: '1px solid #f59e0b20',
                 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#f59e0b', marginBottom: 8, textTransform: 'uppercase' as const }}>
-                    Maior Complexidade
+                    {t('dashboard_high_complexity')}
                   </div>
                   {[...projects]
                     .sort((a, b) => (b.generatedData.complexity ?? 0) - (a.generatedData.complexity ?? 0))

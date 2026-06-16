@@ -1,8 +1,10 @@
 import { lazy, Suspense } from 'preact/compat';
-import { PlatformProvider, usePlatform } from './context/PlatformContext';
+import { PlatformProvider } from './context/PlatformContext';
+import { usePlatform } from './hooks/usePlatform';
 import { AppLayout } from './components/AppLayout';
 import { Onboarding } from './components/Onboarding';
 import { Toast } from './components/Toast';
+import { TabSkeleton } from './components/TabSkeleton';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const ODSGrid = lazy(() =>
@@ -24,13 +26,6 @@ const Dashboard = lazy(() =>
   import('./components/Dashboard').then((m) => ({ default: m.Dashboard }))
 );
 
-function TabFallback() {
-  return (
-    <div className="tab-loading" aria-busy="true">
-      <div className="tab-loading-spinner" />
-    </div>
-  );
-}
 
 function AppContent() {
   const { state } = usePlatform();
@@ -67,7 +62,7 @@ function AppContent() {
           exit={{ opacity: 0, y: -15 }}
           transition={{ duration: 0.22, ease: 'easeInOut' }}
         >
-          <Suspense fallback={<TabFallback />}>
+          <Suspense fallback={<TabSkeleton />}>
             {renderTabContent()}
           </Suspense>
         </motion.div>

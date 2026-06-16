@@ -2,6 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { usePlatform } from '../context/PlatformContext';
 import { useTranslation } from '../i18n';
 import { getIcon } from './ODSIcons';
+import { Logger } from '../utils/logger';
 
 export function ProjectPlanner() {
   const { state, dispatch } = usePlatform();
@@ -118,7 +119,7 @@ export function ProjectPlanner() {
               alignment: AlignmentType.CENTER,
             }),
             new Paragraph({
-              text: 'Relatório Executivo de Alinhamento ODS & Modelagem de Impacto',
+              text: t('export_docx_title'),
               alignment: AlignmentType.CENTER,
             }),
             new Paragraph({ text: '' }), // spacer
@@ -135,7 +136,7 @@ export function ProjectPlanner() {
 
             // Section 2: Metrics Table
             new Paragraph({
-              text: '2. Parâmetros de Recursos e Metas de Impacto',
+              text: t('export_docx_metrics_title'),
               heading: HeadingLevel.HEADING_1,
             }),
             new Table({
@@ -149,37 +150,37 @@ export function ProjectPlanner() {
               rows: [
                 new TableRow({
                   children: [
-                    new TableCell({ children: [new Paragraph({ text: 'Métrica/Parâmetro', style: 'strong' })] }),
-                    new TableCell({ children: [new Paragraph({ text: 'Valor Estimado', style: 'strong' })] })
+                    new TableCell({ children: [new Paragraph({ text: t('export_docx_metric_param'), style: 'strong' })] }),
+                    new TableCell({ children: [new Paragraph({ text: t('export_docx_metric_value'), style: 'strong' })] })
                   ]
                 }),
                 new TableRow({
                   children: [
-                    new TableCell({ children: [new Paragraph({ text: 'Orçamento Alocado (USD)' })] }),
+                    new TableCell({ children: [new Paragraph({ text: t('export_csv_budget') })] }),
                     new TableCell({ children: [new Paragraph({ text: `$${state.inputs.budget}` })] })
                   ]
                 }),
                 new TableRow({
                   children: [
-                    new TableCell({ children: [new Paragraph({ text: 'Beneficiários Estimados' })] }),
+                    new TableCell({ children: [new Paragraph({ text: t('export_csv_beneficiaries') })] }),
                     new TableCell({ children: [new Paragraph({ text: `${state.inputs.beneficiaries}` })] })
                   ]
                 }),
                 new TableRow({
                   children: [
-                    new TableCell({ children: [new Paragraph({ text: 'Duração Operacional' })] }),
-                    new TableCell({ children: [new Paragraph({ text: `${state.inputs.duration} Meses` })] })
+                    new TableCell({ children: [new Paragraph({ text: t('export_docx_operational_duration') })] }),
+                    new TableCell({ children: [new Paragraph({ text: `${state.inputs.duration} ${t('export_docx_months')}` })] })
                   ]
                 }),
                 new TableRow({
                   children: [
-                    new TableCell({ children: [new Paragraph({ text: 'Tamanho de Equipe' })] }),
-                    new TableCell({ children: [new Paragraph({ text: `${state.inputs.teamSize} Colaboradores` })] })
+                    new TableCell({ children: [new Paragraph({ text: t('export_docx_team_size') })] }),
+                    new TableCell({ children: [new Paragraph({ text: `${state.inputs.teamSize} ${t('export_docx_collaborators')}` })] })
                   ]
                 }),
                 new TableRow({
                   children: [
-                    new TableCell({ children: [new Paragraph({ text: 'Índice de Impacto Geral' })] }),
+                    new TableCell({ children: [new Paragraph({ text: t('export_docx_impact_index') })] }),
                     new TableCell({ children: [new Paragraph({ text: `${project.overallImpactScore}/100` })] })
                   ]
                 }),
@@ -189,13 +190,13 @@ export function ProjectPlanner() {
 
             // Section 3: Objectives Checklist
             new Paragraph({
-              text: '3. Iniciativas Operacionais ODS',
+              text: t('export_docx_initiatives'),
               heading: HeadingLevel.HEADING_1,
             }),
             ...project.objectives.map((obj: string, i: number) => (
               new Paragraph({
                 children: [
-                  new TextRun({ text: `• [Iniciativa ${i + 1}]: `, bold: true }),
+                  new TextRun({ text: `• [${t('export_docx_initiative')} ${i + 1}]: `, bold: true }),
                   new TextRun({ text: obj })
                 ]
               })
@@ -209,7 +210,7 @@ export function ProjectPlanner() {
             }),
             new Paragraph({
               children: [
-                new TextRun({ text: 'Parceiros Recomendados: ', bold: true }),
+                new TextRun({ text: `${t('export_docx_partners')}: `, bold: true }),
                 new TextRun({ text: project.partners })
               ]
             }),
@@ -235,7 +236,7 @@ export function ProjectPlanner() {
       URL.revokeObjectURL(url);
       dispatch({ type: 'ADD_TOAST', payload: { message: 'DOCX exportado com sucesso!', type: 'success' } });
     } catch (e) {
-      console.error('Failed generating docx:', e);
+      Logger.error('Failed generating docx:', e);
       dispatch({ type: 'ADD_TOAST', payload: { message: 'Erro ao gerar DOCX', type: 'error' } });
     }
   };
@@ -338,16 +339,16 @@ export function ProjectPlanner() {
           {/* Resource Indicators Summary */}
           <div className="clay-card">
             <h3 style={{ fontSize: 'clamp(0.95rem, 1.5vw, 1rem)', fontWeight: 800, marginBottom: '16px' }}>
-              {t('planner_title') ? 'Métricas Operacionais' : 'Métricas Operacionais'}
+              {t('planner_operational_metrics')}
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {[
-                { label: 'KPIs Recomendados',              value: `${project.indicators.length}` },
-                { label: 'Custo por Beneficiário',         value: `$${project.costPerBeneficiary} USD` },
-                { label: 'Índice de Impacto',               value: `${project.overallImpactScore}/100` },
-                { label: 'Sustentabilidade',                value: `${project.sustainabilityIndex}/100` },
-                { label: 'Alinhamento ODS',                 value: `${project.alignmentScore}/100` },
-                { label: 'Alcance Estimado',                value: project.reachEstimated.toLocaleString() },
+                { label: t('planner_kpis_recommended'),              value: `${project.indicators.length}` },
+                { label: t('planner_cost_per_beneficiary'),         value: `$${project.costPerBeneficiary} USD` },
+                { label: t('planner_impact_index'),               value: `${project.overallImpactScore}/100` },
+                { label: t('planner_sustainability'),                value: `${project.sustainabilityIndex}/100` },
+                { label: t('planner_alignment_ods'),                 value: `${project.alignmentScore}/100` },
+                { label: t('planner_estimated_reach'),                value: project.reachEstimated.toLocaleString() },
               ].map(({ label, value }) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '8px', gap: '12px', boxShadow: 'inset 0 -1px 0 var(--border-dark)' }}>
                   <span style={{ fontSize: 'clamp(11px, 1.2vw, 13px)', color: 'var(--text-secondary)', flexShrink: 0 }}>{label}</span>
@@ -355,7 +356,7 @@ export function ProjectPlanner() {
                 </div>
               ))}
               <div style={{ paddingTop: '4px' }}>
-                <span style={{ fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: '4px' }}>Público Alvo</span>
+                <span style={{ fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'block', marginBottom: '4px' }}>{t('planner_target_audience')}</span>
                 <span style={{ fontSize: 'clamp(11px, 1.2vw, 12px)', color: 'var(--text-secondary)', lineHeight: 1.5 }}>{project.targetAudience}</span>
               </div>
             </div>
@@ -363,7 +364,7 @@ export function ProjectPlanner() {
 
           {/* Export Center */}
           <div className="clay-card" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <h3 style={{ fontSize: 'clamp(1rem, 1.8vw, 1.125rem)', marginBottom: '8px' }}>Centro de Exportação</h3>
+            <h3 style={{ fontSize: 'clamp(1rem, 1.8vw, 1.125rem)', marginBottom: '8px' }}>{t('planner_export_center')}</h3>
             
             <button type="button" onClick={exportDOCX} className="clay-button" style={{ justifyContent: 'flex-start', gap: '10px', width: '100%', display: 'flex', alignItems: 'center' }}>
               <div style={{ width: '16px', height: '16px' }}>{getIcon('document', '', 'currentColor')}</div>

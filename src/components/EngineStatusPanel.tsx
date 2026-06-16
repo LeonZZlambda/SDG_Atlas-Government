@@ -8,307 +8,23 @@ import {
   type Graph,
 } from '../utils/graphAlgorithms';
 import { getCoefficient, SDG_METADATA } from '../utils/projectGenerator';
-
-// ─── Types ──────────────────────────────────────────────────────────────────
-
-interface EngineMetric {
-  label: string;
-  value: string;
-  sub?: string;
-  confidence?: 'high' | 'medium' | 'low';
-}
-
-interface ScoreBreakdown {
-  component: string;
-  value: number;
-  weight: number;
-  contribution: number;
-  formula?: string;
-  normalized?: { raw: number; normalized: number; method: string };
-}
-
-interface ExplanationPanel {
-  metricName: string;
-  score: number;
-  maxScore: number;
-  uncertainty?: { min: number; max: number; margin: number };
-  factors: Array<{ name: string; impact: number; reason: string }>;
-  confidence: 'high' | 'medium' | 'low';
-  interpretation: string;
-  trend?: 'increasing' | 'stable' | 'decreasing';
-}
-
-interface Recommendation {
-  sdgId: number;
-  type: 'add' | 'remove';
-  expectedImpact: number;
-  reason: string;
-  priority: 'high' | 'medium' | 'low';
-}
-
-interface ExecutiveInsight {
-  type: 'opportunity' | 'risk' | 'consideration';
-  title: string;
-  description: string;
-  priority: 'high' | 'medium' | 'low';
-}
-
-interface Engine {
-  id: string;
-  name: string;
-  tagline: string;
-  color: string;
-  accentBg: string;
-  icon: React.ReactNode;
-  status: 'active' | 'idle' | 'computing';
-  metrics: EngineMetric[];
-  formula?: { label: string; expr: string; explanation?: string }[];
-  detail: string;
-  breakdowns?: ScoreBreakdown[];
-  methodology?: string[];
-  assumptions?: string[];
-  classification?: string;
-  pipeline?: string[];
-  clickableBreakdown?: boolean;
-  benchmark?: { label: string; color: string; icon: string };
-  academicReferences?: { concept: string; explanation: string; references: string[] }[];
-}
-
-// ─── SVG Icons ───────────────────────────────────────────────────────────────
-
-const IconGraph = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/>
-    <line x1="7" y1="11.5" x2="17" y2="6"/><line x1="7" y1="12.5" x2="17" y2="18"/>
-  </svg>
-);
-
-const IconLightning = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16" style={{ verticalAlign: 'middle', marginRight: 4 }}>
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-  </svg>
-);
-const IconMCDA = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-  </svg>
-);
-const IconImpact = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-  </svg>
-);
-const IconSustain = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <path d="M12 22V12"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>
-    <path d="M12 12a5 5 0 0 0 5-5c0-3-5-7-5-7S7 4 7 7a5 5 0 0 0 5 5z"/>
-  </svg>
-);
-const IconGenerator = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="100%" height="100%">
-    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/>
-    <line x1="12" y1="17" x2="12" y2="21"/>
-  </svg>
-);
-
-// ─── Tooltip Component ───────────────────────────────────────────────────────
-
-function Tooltip({ children, content }: { children: React.ReactNode; content: string }) {
-  const [visible, setVisible] = useState(false);
-  
-  return (
-    <span 
-      style={{ position: 'relative', display: 'inline-block', cursor: 'help' }}
-      onMouseEnter={() => setVisible(true)}
-      onMouseLeave={() => setVisible(false)}
-      onFocus={() => setVisible(true)}
-      onBlur={() => setVisible(false)}
-    >
-      {children}
-      {visible && (
-        <div style={{
-          position: 'absolute',
-          bottom: '100%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          marginBottom: 8,
-          padding: '8px 12px',
-          background: 'rgba(0, 0, 0, 0.9)',
-          color: '#fff',
-          fontSize: 11,
-          borderRadius: 8,
-          maxWidth: 250,
-          width: 'max-content',
-          zIndex: 1000,
-          boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-        }}>
-          {content}
-        </div>
-      )}
-    </span>
-  );
-}
-
-// ─── Confidence Indicator ───────────────────────────────────────────────────────
-
-function ConfidenceIndicator({ level }: { level: 'high' | 'medium' | 'low' }) {
-  const colors = {
-    high: '#10b981',
-    medium: '#f59e0b',
-    low: '#ef4444',
-  };
-  const labels = {
-    high: 'Alta',
-    medium: 'Média',
-    low: 'Baixa',
-  };
-  
-  return (
-    <Tooltip content={`Nível de confiança estatística: ${labels[level]}`}>
-      <span style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 4,
-        fontSize: 9,
-        fontWeight: 600,
-        color: colors[level],
-      }}>
-        <span style={{
-          width: 6,
-          height: 6,
-          borderRadius: '50%',
-          background: colors[level],
-        }} />
-        {labels[level]}
-      </span>
-    </Tooltip>
-  );
-}
-
-// ─── Explanation Panel Component ───────────────────────────────────────────────────
-
-function ExplanationPanel({ explanation }: { explanation: ExplanationPanel }) {
-  const [expanded, setExpanded] = useState(false);
-  
-  return (
-    <div
-      style={{
-        marginTop: 12,
-        padding: '12px 14px',
-        borderRadius: 10,
-        background: 'var(--bg-glass)',
-        boxShadow: expanded ? 'var(--clay-card-shadow), 0 4px 16px rgba(0,0,0,0.1)' : 'var(--clay-input-shadow)',
-        cursor: 'pointer',
-        transition: 'all 0.25s ease',
-        border: `1.5px solid ${expanded ? '#6366f144' : 'transparent'}`,
-      }}
-      onClick={() => setExpanded(!expanded)}
-    >
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary)' }}>
-            {explanation.metricName}: {explanation.uncertainty ? `${explanation.score} ± ${explanation.uncertainty.margin}` : `${explanation.score}`}/{explanation.maxScore}
-          </span>
-          <ConfidenceIndicator level={explanation.confidence} />
-          {explanation.trend && (
-            <span style={{
-              fontSize: 8,
-              padding: '2px 6px',
-              borderRadius: 4,
-              background: explanation.trend === 'increasing' ? '#10b98120' : explanation.trend === 'decreasing' ? '#ef444420' : '#94a3b820',
-              color: explanation.trend === 'increasing' ? '#10b981' : explanation.trend === 'decreasing' ? '#ef4444' : '#94a3b8',
-              fontWeight: 600,
-            }}>
-              {explanation.trend === 'increasing' ? '↗' : explanation.trend === 'decreasing' ? '↘' : '→'}
-            </span>
-          )}
-        </div>
-        <svg
-          width={14}
-          height={14}
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="var(--text-muted)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          style={{
-            transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-            transition: 'transform 0.25s ease',
-            flexShrink: 0
-          }}
-        >
-          <polyline points="6 9 12 15 18 9"/>
-        </svg>
-      </div>
-      
-      <div style={{ fontSize: 9, color: 'var(--text-secondary)', marginBottom: 8 }}>
-        {explanation.interpretation}
-      </div>
-      
-      {expanded && (
-        <div style={{
-          paddingTop: 8,
-          borderTop: '1px solid var(--border-dark)',
-        }}>
-          <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', marginBottom: 6 }}>
-            Fatores Considerados
-          </div>
-          {explanation.factors.map((factor, i) => (
-            <div key={i} style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '4px 8px',
-              marginBottom: 4,
-              borderRadius: 6,
-              background: factor.impact > 0 ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
-            }}>
-              <span style={{ fontSize: 9, color: 'var(--text-primary)', fontWeight: 500 }}>{factor.name}</span>
-              <span style={{ fontSize: 9, fontWeight: 700, color: factor.impact > 0 ? '#10b981' : '#ef4444' }}>
-                {factor.impact > 0 ? '+' : ''}{factor.impact}
-              </span>
-            </div>
-          ))}
-          <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 6, fontStyle: 'italic' }}>
-            {explanation.factors.map(f => f.reason).join(' • ')}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ─── Pulse Dot ────────────────────────────────────────────────────────────────
-
-function PulseDot({ status }: { status: 'active' | 'idle' | 'computing' }) {
-  const dotColor = status === 'active' ? '#10b981'
-                 : status === 'computing' ? '#f59e0b'
-                 : '#94a3b8';
-
-  return (
-    <span style={{ position: 'relative', display: 'inline-flex', width: 10, height: 10 }}>
-      {status !== 'idle' && (
-        <span style={{
-          position: 'absolute',
-          inset: 0,
-          borderRadius: '50%',
-          background: dotColor,
-          opacity: 0.4,
-          animation: 'engine-ping 1.4s ease-in-out infinite',
-        }} />
-      )}
-      <span style={{
-        position: 'relative',
-        display: 'block',
-        width: 10,
-        height: 10,
-        borderRadius: '50%',
-        background: dotColor,
-        boxShadow: `0 0 6px ${dotColor}88`,
-      }} />
-    </span>
-  );
-}
+import { Tooltip } from './EngineStatusPanel/Tooltip';
+import { ConfidenceIndicator } from './EngineStatusPanel/ConfidenceIndicator';
+import { ExplanationPanel, type ExplanationPanelData } from './EngineStatusPanel/ExplanationPanel';
+import { PulseDot } from './EngineStatusPanel/PulseDot';
+import {
+  IconGraph,
+  IconLightning,
+  IconMCDA,
+  IconImpact,
+  IconSustain,
+  IconGenerator,
+} from './EngineStatusPanel/Icons';
+import type {
+  Recommendation,
+  ExecutiveInsight,
+  Engine,
+} from './EngineStatusPanel/types';
 
 // ─── Engine Card ─────────────────────────────────────────────────────────────
 
@@ -1067,7 +783,7 @@ export function EngineStatusPanel() {
 
   // Generate Explanation Panels
   const generateExplanationPanels = () => {
-    const panels: ExplanationPanel[] = [];
+    const panels: ExplanationPanelData[] = [];
     
     if (hasSdgs && project) {
       // Use project.generatedData for Single Source of Truth
@@ -1088,7 +804,11 @@ export function EngineStatusPanel() {
         confidence: 'high',
         interpretation: project.overallImpactScore >= 70 ? 'Alto impacto sistêmico emergente' : project.overallImpactScore >= 50 ? 'Impacto moderado' : 'Impacto limitado',
         trend: 'increasing',
-        factors: project.scoreBreakdown || [],
+        factors: project.scoreBreakdown.map(item => ({
+          name: item.name,
+          impact: item.value,
+          reason: item.isPositive ? 'Positive contributor' : 'Negative factor',
+        })) || [],
       });
       
       const sustainUncertainty = {

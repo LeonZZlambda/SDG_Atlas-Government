@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { getSDGIcon } from './ODSIcons';
+import { useTranslation } from '../i18n';
 
 interface ODSCardProps {
   id: number;
@@ -17,6 +18,8 @@ interface ODSCardProps {
 }
 
 export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle, analyticalMetadata }: ODSCardProps) {
+  const { t } = useTranslation();
+  
   // Keypress handler for keyboard accessibility (space/enter to toggle checkbox)
   const handleKeyDown = (e: any) => {
     if (e.key === ' ' || e.key === 'Enter') {
@@ -28,9 +31,7 @@ export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle, anal
   return (
     <motion.div
       tabIndex={0}
-      role="checkbox"
-      aria-checked={isSelected}
-      aria-label={`SDG ${id}: ${name}`}
+      aria-label={`SDG ${id}: ${name}. ${isSelected ? 'Selected' : 'Not selected'}`}
       onKeyDown={handleKeyDown}
       onClick={onToggle}
       className={`clay-card clay-card-hover ods-card`}
@@ -131,7 +132,7 @@ export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle, anal
         }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600 }}>
-                Complexidade:
+                {t('card_complexity')}:
               </span>
               <span style={{ 
                 color: analyticalMetadata.complexity === 'Alta' ? '#dc2626' : 

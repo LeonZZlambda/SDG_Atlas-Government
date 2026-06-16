@@ -1,0 +1,89 @@
+/* Responsive Container Styles */
+.responsive-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Breakpoint-specific padding */
+.responsive-xs {
+  padding: 0 12px;
+}
+
+.responsive-sm {
+  padding: 0 16px;
+}
+
+.responsive-md {
+  padding: 0 20px;
+}
+
+.responsive-lg {
+  padding: 0 24px;
+}
+
+.responsive-xl {
+  padding: 0 32px;
+  max-width: 1400px;
+}
+
+/* Responsive grid adjustments */
+@media (max-width: 768px) {
+  .ods-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ods-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+  }
+  
+  .clay-card {
+    padding: 12px !important;
+  }
+  
+  .page-header h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  .page-header p {
+    font-size: 0.875rem !important;
+  }
+}
+
+/* Touch-friendly targets for mobile */
+@media (max-width: 768px) {
+  button,
+  .clay-button {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+  
+  .ods-card {
+    min-height: 120px;
+  }
+}
+
+/* Improved text scaling */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 1025px) {
+  html {
+    font-size: 16px;
+  }
+}
