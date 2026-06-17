@@ -469,6 +469,69 @@ npm test
 - [Research Agenda](docs/RESEARCH_AGENDA.md) - Future research directions
 
 ---
+## Research Contribution
+
+This framework proposes an integrated SDG Decision Intelligence Pipeline that combines:
+
+- SDG network analytics
+- multi-criteria decision analysis
+- systemic risk propagation
+- sustainability scoring
+- uncertainty quantification
+
+into a unified decision-support architecture.
+
+To the author's knowledge, no existing open-source platform combines these methods into a single explainable SDG portfolio optimization workflow.
+
+## Scientific Architecture
+
+![Conceptual Architecture](file:///Users/leonzz/.gemini/antigravity/brain/8cc7c926-5567-412e-9ed6-b0aef6c2b3a9/conceptual_architecture_1781720907844.png)
+
+The framework follows a rigorously defined **scientific architecture** that maps raw data through a sequence of analytical layers:
+
+1. **Raw Inputs** – Project parameters, SDG metadata, synergy coefficients.
+2. **Graph Construction** – Builds a weighted SDG network.
+3. **Network Analysis** – Centrality, community detection, path analysis.
+4. **Risk Propagation** – Systemic Risk Engine evaluates cascade effects.
+5. **Scoring Engines** – Impact, sustainability, feasibility metrics.
+6. **MCDA Ranking** – Multi‑criteria decision analysis aggregates scores.
+7. **Uncertainty Analysis** – Monte Carlo simulations and sensitivity analysis.
+8. **Decision Recommendations** – Final portfolio suggestions and confidence intervals.
+
+Key engine modules:
+- **Systemic Risk Engine** – Implements probabilistic cascade modeling based on betweenness and dependency graphs.
+- **Emergent Behavior Engine** – Detects non‑linear interactions using simulation‑driven scenario analysis.
+- **Tradeoff Analysis Engine** – Quantifies conflicts and synergies across SDGs using weighted graph metrics.
+
+Mathematically, each stage is underpinned by well‑established algorithms (e.g., Dijkstra for shortest paths, PageRank for influence, AHP/TOPSIS for MCDA) and documented inference rules, turning abstract concepts into reproducible, explainable contributions.
+
+## Limitations
+
+Current limitations include:
+
+- Synthetic project generation
+- Static synergy coefficients
+- Lack of real-world validation datasets
+- Simplified causal assumptions
+- Limited geographic modeling
+
+Results should be interpreted as decision-support outputs rather than policy recommendations.
+
+## Validation Strategy
+
+### Internal Validation
+
+- Unit testing
+- Sensitivity analysis
+- Monte Carlo robustness tests
+
+### External Validation
+
+- Comparison with published SDG studies
+- Expert review
+- Case-study benchmarking
+
+---
 
 ## Contributing
 
