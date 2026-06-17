@@ -567,7 +567,7 @@ If you use this framework in your research, please cite:
   title = {SDG Decision Intelligence Framework},
   author = {{LeonZZlambda (GitHub: LeonZZlambda)}},
   year = {2024},
-  url = {https://github.com/your-org/sdg-decision-intelligence-framework},
+  url = {https://github.com/LeonZZlambda/SDG_Atlas-Government},
   version = {0.1.0}
 }
 ```
