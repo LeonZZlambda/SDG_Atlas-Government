@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![Preact](https://img.shields.io/badge/Preact-10.29-royalblue)](https://preactjs.com/)
-[![i18n](https://img.shields.io/badge/i18n-✔-green)](https://github.com/i18next/i18next)
+[![i18n](https://img.shields.io/badge/i18n-26.3.1-green)]()
 
 
 ## Features
@@ -106,15 +106,6 @@ Desktop applications would limit accessibility and collaboration.
 - **Spatial Analysis**: Geographic SDG targeting and regional optimization
 - **ML Calibration**: Machine learning for synergy coefficient calibration
 - **Temporal Modeling**: Long-term trajectory prediction and dynamic networks
-
-## Demo
-
-````carousel
-![Dashboard English](docs/images/dashboard_en.png)
-<!-- slide -->
-![Design System Overview](docs/images/design_system.png)
-````
-
 ---
 
 An open-source Decision Intelligence Framework for designing, evaluating, and optimizing Sustainable Development Goal portfolios through graph analytics, multi-criteria decision analysis, simulation, and impact modeling.
