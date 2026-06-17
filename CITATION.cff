@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+title: "SDG Decision Intelligence Framework"
+authors:
+  - family-names: "Contributor"
+    given-names: "Anonymous"
+    orcid: "https://orcid.org/0000-0000-0000-0000"
+version: "0.1.0"
+doi: "10.5281/zenodo.XXXXXXX"
+date-released: "2024-01-01"
+url: "https://github.com/your-org/sdg-decision-intelligence-framework"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "Contributor"
+      given-names: "Anonymous"
+  title: "SDG Decision Intelligence Framework: A Decision Support System for Sustainable Development Portfolio Design"
+  year: "2024"
+  journal: "Journal of Decision Intelligence"
+  volume: "1"
+  issue: "1"
+  pages: "1-25"
+  doi: "10.1234/jdi.2024.001"
+keywords:
+  - "decision intelligence"
+  - "sustainable development goals"
+  - "multi-criteria decision analysis"
+  - "graph analytics"
+  - "network science"
+  - "simulation"
+  - "impact modeling"
+license: MIT
