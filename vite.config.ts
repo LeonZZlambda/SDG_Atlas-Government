@@ -27,6 +27,7 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'build',
     rolldownOptions: {
       output: {
         codeSplitting: {

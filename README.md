@@ -492,7 +492,7 @@ This framework proposes an integrated SDG Decision Intelligence Pipeline that co
 
 into a unified decision-support architecture.
 
-To the author's knowledge, this is the **first open‑source platform** that unifies graph‑based SDG network analysis, multi‑criteria decision analysis, systemic risk modeling, and uncertainty quantification into a single, fully explainable portfolio‑optimization workflow.
+To the author's knowledge, few open-source platforms integrate graph-based SDG network analysis, MCDA, systemic risk modeling, and uncertainty quantification into a unified explainable workflow.
 
 ## Scientific Architecture
 
