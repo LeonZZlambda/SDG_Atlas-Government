@@ -190,6 +190,84 @@ dist/
 
 ---
 
+## Reproducibility Workflow
+
+This section documents the complete workflow for reproducing the framework's behavior and results as described in the documentation.
+
+### Complete Reproduction Steps
+
+To reproduce the exact examples and results from the documentation:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/your-org/sdg-decision-intelligence-framework.git
+cd sdg-decision-intelligence-framework
+
+# 2. Install dependencies
+npm install
+
+# 3. Run the test suite to verify correctness
+npm test
+
+# 4. Start the development server
+npm run dev
+
+# 5. Open http://localhost:5173 in your browser
+# The application should load with the default example scenarios
+```
+
+### Verifying Reproducibility
+
+After completing the setup steps, you should be able to:
+
+1. **Load Example Projects**: The dashboard should display sample SDG initiatives with pre-calculated scores
+2. **Run Scoring Algorithms**: All scoring functions should produce deterministic results for identical inputs
+3. **Reproduce Graph Analysis**: Network metrics (centrality, betweenness, etc.) should be consistent across runs
+4. **Validate MCDA Methods**: AHP, TOPSIS, ELECTRE, and PROMETHEE should produce consistent rankings
+5. **Monte Carlo Results**: Simulation runs with fixed random seeds should produce identical outputs
+
+### Deterministic Behavior
+
+The framework ensures reproducibility through:
+
+- **Fixed Random Seeds**: Monte Carlo simulations use seeded random number generators for consistent results
+- **Deterministic Algorithms**: All scoring and graph algorithms are deterministic
+- **Version-Pinned Dependencies**: `package-lock.json` ensures exact dependency versions
+- **Type-Safe Implementation**: TypeScript prevents runtime type errors that could cause non-deterministic behavior
+
+### Test Coverage
+
+The test suite (`src/__tests__/`) validates:
+
+- Graph algorithm correctness (centrality, community detection, path analysis)
+- Scoring engine accuracy (impact, sustainability, feasibility, SDG alignment)
+- MCDA method implementation (AHP, TOPSIS, ELECTRE, PROMETHEE)
+- Consensus ranking aggregation
+- Formula-to-implementation traceability
+
+Running `npm test` should pass all tests, confirming that your environment reproduces the expected behavior.
+
+### Troubleshooting Reproducibility Issues
+
+If results differ from documentation:
+
+1. **Check Node.js Version**: Ensure you're using Node.js 18.0 or higher
+2. **Verify Dependencies**: Run `npm install` to ensure exact dependency versions
+3. **Clear Caches**: Remove `.vite` and `node_modules/.cache` directories
+4. **Run Tests**: `npm test` should pass without errors
+5. **Check Environment Variables**: Ensure no conflicting `.env` files are present
+
+### Reporting Reproducibility Issues
+
+If you cannot reproduce the documented results:
+
+1. Document your environment (OS, Node.js version, npm version)
+2. Run `npm test` and report any failing tests
+3. Provide the specific example or scenario that fails to reproduce
+4. Include error messages or unexpected outputs
+
+---
+
 ## Testing
 
 ### Test Structure

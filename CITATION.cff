@@ -7,7 +7,7 @@ authors:
     orcid: "https://orcid.org/0000-0000-0000-0000"
 version: "0.1.0"
 doi: "10.5281/zenodo.XXXXXXX"
-date-released: "2024-01-01"
+date-released: "2026-01-01"
 url: "https://github.com/your-org/sdg-decision-intelligence-framework"
 preferred-citation:
   type: article
@@ -15,7 +15,7 @@ preferred-citation:
     - family-names: "Contributor"
       given-names: "Anonymous"
   title: "SDG Decision Intelligence Framework: A Decision Support System for Sustainable Development Portfolio Design"
-  year: "2024"
+  year: "2026"
   journal: "Journal of Decision Intelligence"
   volume: "1"
   issue: "1"

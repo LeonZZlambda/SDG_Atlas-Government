@@ -14,6 +14,99 @@
 - **Explainable UI**: Tooltip explanations sourced from locale files for full traceability.
 - **Extensible Architecture**: Layered design with clear separation of presentation, domain, and data layers.
 
+## Key Design Decisions
+
+### Why Graphs Instead of Matrices?
+
+SDG interactions are naturally relational and network-oriented. Graph theory provides:
+- **Intuitive Representation**: Nodes as SDGs, edges as relationships
+- **Rich Metrics**: Centrality, betweenness, community detection
+- **Path Analysis**: Shortest paths, cascading influences
+- **Network Effects**: Amplification through central nodes
+
+Matrices would lose the topological structure that makes SDG interactions meaningful.
+
+### Why Explainable Scores?
+
+Decision support systems require transparency for:
+- **Stakeholder Trust**: Users need to understand how scores are derived
+- **Regulatory Compliance**: Many sectors require explainable AI
+- **Debugging**: Transparent models are easier to validate and improve
+- **Learning**: Explanations help users understand SDG dynamics
+
+Black-box scoring would undermine adoption in policy contexts.
+
+### Why Multiple MCDA Methods?
+
+Different decision contexts require different approaches:
+- **AHP**: Hierarchical decisions with clear criteria structure
+- **TOPSIS**: Distance-based ranking with ideal/anti-ideal solutions
+- **ELECTRE**: Outranking for complex preference structures
+- **PROMETHEE**: Preference functions for nuanced comparisons
+- **Consensus**: Robustness through method aggregation
+
+Single-method approaches are sensitive to method choice.
+
+### Why Monte Carlo Simulation?
+
+Real-world decisions involve uncertainty:
+- **Parameter Uncertainty**: Budgets, timelines, and risks are estimates
+- **Model Uncertainty**: Synergy coefficients may vary by context
+- **Robustness Testing**: Identify stable vs. fragile recommendations
+- **Confidence Intervals**: Quantify uncertainty for decision-makers
+
+Deterministic scores would overstate precision.
+
+### Why Web-Based Architecture?
+
+Accessibility and collaboration drive the choice:
+- **Cross-Platform**: Works on any device with a browser
+- **No Installation**: Reduces adoption barriers
+- **Collaborative**: Easy sharing of scenarios and results
+- **Extensible**: API-ready for integration with other systems
+
+Desktop applications would limit accessibility and collaboration.
+
+---
+
+## Implementation Status
+
+### Maturity Matrix
+
+| Area | Maturity | Notes |
+|------|----------|-------|
+| Graph Analytics | High | Fully implemented with comprehensive centrality metrics and community detection |
+| Impact Scoring | High | Complete scoring engine with traceable formulas and factor breakdown |
+| Sustainability Scoring | High | Environmental alignment and long-term viability metrics implemented |
+| Feasibility Scoring | High | Dependency analysis and team capacity metrics operational |
+| SDG Alignment Scoring | High | Coverage, synergy, and diversity metrics fully functional |
+| MCDA Methods | High | AHP, TOPSIS, ELECTRE, PROMETHEE, and consensus ranking implemented |
+| Internationalization | High | English and Portuguese translations complete, extensible architecture |
+| Explainable Dashboard | High | Interactive UI with tooltip explanations and score decomposition |
+| Unit Testing | Medium | Core algorithms have test coverage, expansion ongoing |
+| Sensitivity Analysis | Medium | Monte Carlo simulation implemented, advanced sensitivity methods planned |
+| Real Data Integration | Low | Currently uses synthetic data, real-world integration planned |
+| Scenario Simulation | Medium | Monte Carlo simulation operational, agent-based simulation planned |
+| Validation | Medium | Internal validation complete, external validation in progress |
+| Spatial Analysis | Low | Geographic modeling not yet implemented |
+
+### Implemented
+- **Graph Analytics**: Centrality measures, community detection, path analysis, and network statistics
+- **Impact Engine**: Beneficiary efficiency, risk-adjusted return, synergy strength, and time efficiency scoring
+- **Sustainability Engine**: Environmental alignment, long-term viability, and resource optimization metrics
+- **Internationalization**: Full UI translation support for English and Portuguese
+- **Explainable Dashboard**: Interactive UI with tooltip explanations and traceable metrics
+
+### Experimental
+- **Systemic Risk Engine**: Probabilistic cascade modeling and cascading failure detection
+- **Tradeoff Analysis Engine**: Conflict and synergy quantification across SDGs
+
+### Planned
+- **Agent-Based Simulation**: Dynamic SDG modeling with agent interactions
+- **Spatial Analysis**: Geographic SDG targeting and regional optimization
+- **ML Calibration**: Machine learning for synergy coefficient calibration
+- **Temporal Modeling**: Long-term trajectory prediction and dynamic networks
+
 ## Demo
 
 ````carousel
@@ -32,6 +125,8 @@ An open-source Decision Intelligence Framework for designing, evaluating, and op
 
 The SDG Decision Intelligence Framework addresses a critical gap in sustainable development planning: the absence of systemic reasoning in goal selection and portfolio design. Traditional approaches treat SDGs as isolated targets, missing the complex network effects, hidden tradeoffs, and synergistic relationships that determine real-world impact.
 
+**Important Note**: This framework is designed to support decision analysis. Its outputs should be interpreted as analytical signals rather than validated policy recommendations. The framework provides structured, mathematically-grounded insights to inform decision-making, but does not replace expert judgment or guarantee optimal outcomes.
+
 This framework provides a rigorous, mathematically-grounded approach to SDG portfolio design that enables:
 
 - **Systemic Thinking**: Understand how SDGs interact through network effects and cascading influences
@@ -41,6 +136,36 @@ This framework provides a rigorous, mathematically-grounded approach to SDG port
 - **Evidence-Based Decisions**: Ground recommendations in established research and validated methodologies
 
 The framework transforms SDG planning from intuitive goal selection into a rigorous decision science, enabling governments, NGOs, researchers, and social innovators to design portfolios that maximize impact while managing complexity and uncertainty.
+
+---
+
+## Why This Project Exists
+
+Most SDG tools focus on monitoring indicators and tracking progress after decisions have been made. This project focuses on decision support before resources are allocated.
+
+The objective is not merely to measure outcomes but to help stakeholders understand tradeoffs, synergies, risks, and portfolio-level impacts during the planning phase. By providing rigorous, mathematically-grounded analysis before implementation, this framework enables:
+
+- **Proactive Risk Management**: Identify systemic risks and cascading failures before they occur
+- **Strategic Resource Allocation**: Optimize budget and timeline decisions based on quantitative analysis
+- **Evidence-Based Planning**: Ground recommendations in established research and validated methodologies
+- **Transparent Decision Rationale**: Trace every recommendation to its mathematical foundation
+
+This project exists to transform SDG planning from reactive monitoring to proactive, intelligence-driven decision-making.
+
+---
+
+## Core Assumptions
+
+All models rely on simplifying assumptions. The framework is built on the following core assumptions:
+
+- **SDG Network Representation**: SDG relationships can be approximated as a weighted graph where nodes represent goals and edges represent synergistic or conflicting relationships.
+- **Stable Interactions**: Synergies and tradeoffs between SDGs remain relatively stable during the analysis timeframe.
+- **Composite Indicators**: Project impact can be represented through composite indicators that aggregate multiple dimensions.
+- **Expert Weights**: Expert-defined weights provide a reasonable starting point for multi-criteria analysis, though they may be subject to bias.
+- **Linear Additivity**: Score components can be combined through weighted linear aggregation, though non-linear interactions may exist in reality.
+- **Representative Scenarios**: Monte Carlo simulation scenarios adequately represent the range of possible outcomes.
+
+These assumptions should be considered when interpreting framework outputs and applying them to real-world decision-making.
 
 ---
 
@@ -111,6 +236,8 @@ The framework integrates established analytical methods from decision science, n
 ## Architecture
 
 The framework follows a layered architecture with clear separation of concerns:
+
+![Data Flow Architecture](docs/assets/data_flow_diagram.svg)
 
 ```mermaid
 graph TB
@@ -268,6 +395,23 @@ For each scenario:
 
 All scores are mathematically formulated with traceable inputs and documented assumptions.
 
+### Formula-to-Implementation Traceability
+
+| Formula | Implementation File | Function |
+|---------|---------------------|----------|
+| Impact Score (I) | `src/utils/scoringEngine.ts` | `calculateImpactScore()` |
+| Sustainability Score (S) | `src/utils/scoringEngine.ts` | `calculateSustainabilityScore()` |
+| Feasibility Score (F) | `src/utils/scoringEngine.ts` | `calculateFeasibilityScore()` |
+| SDG Alignment Score (A) | `src/utils/scoringEngine.ts` | `calculateSDGAlignmentScore()` |
+| Overall Score (O) | `src/utils/scoringEngine.ts` | `calculateInitiativeScores()` |
+| AHP Method | `src/utils/mcdaMethods.ts` | `ahp()` |
+| TOPSIS Method | `src/utils/mcdaMethods.ts` | `topsis()` |
+| ELECTRE Method | `src/utils/mcdaMethods.ts` | `electre()` |
+| PROMETHEE Method | `src/utils/mcdaMethods.ts` | `promethee()` |
+| Consensus Ranking | `src/utils/mcdaMethods.ts` | `consensusRanking()` |
+| Graph Centrality | `src/utils/graphAlgorithms.ts` | Various centrality functions |
+| Network Analysis | `src/utils/graphAlgorithms.ts` | Community detection, path analysis |
+
 ### Impact Score (I)
 
 **Formula:**
@@ -378,6 +522,44 @@ Civic tech platforms integrate the framework to provide citizens with transparen
 ---
 
 ## Roadmap
+
+### Research Roadmap
+
+The research roadmap outlines the scientific validation and methodological development phases:
+
+**Phase 1: Graph Analytics Foundation** (Current)
+- Implement and validate graph-theoretic SDG network models
+- Establish centrality metrics and community detection algorithms
+- Document mathematical foundations and evidence base
+- Complete unit testing for graph algorithms
+
+**Phase 2: Risk Propagation Modeling** (In Progress)
+- Develop systemic risk engine with cascade modeling
+- Implement probabilistic failure propagation algorithms
+- Validate against network theory benchmarks
+- Document uncertainty quantification methods
+
+**Phase 3: Empirical Calibration** (Planned)
+- Calibrate synergy coefficients using expert elicitation
+- Validate scoring weights against published research
+- Perform sensitivity analysis on parameter variations
+- Establish confidence intervals for key metrics
+
+**Phase 4: Real-World Validation** (Planned)
+- Partner with NGOs and government agencies for case studies
+- Apply framework to historical SDG projects with known outcomes
+- Compare recommendations against expert assessments
+- Publish validation results in peer-reviewed venues
+
+**Phase 5: Publication-Ready Methodology** (Future)
+- Complete longitudinal evaluation of framework recommendations
+- Establish benchmark datasets for SDG decision support
+- Publish comprehensive methodology paper
+- Create open validation datasets for community use
+
+This research roadmap ensures the framework evolves from a prototype to a validated research artifact suitable for academic publication and real-world application.
+
+### Product Roadmap
 
 ### Short-Term (6 months)
 - Enhanced visualization of network effects and propagation paths
@@ -516,6 +698,38 @@ Key engine modules:
 
 Mathematically, each stage is underpinned by well‑established algorithms (e.g., Dijkstra for shortest paths, PageRank for influence, AHP/TOPSIS for MCDA) and documented inference rules, turning abstract concepts into reproducible, explainable contributions.
 
+## Out of Scope
+
+The framework does not currently:
+
+- **Predict Economic Outcomes**: The framework focuses on SDG impact, not economic ROI or financial projections
+- **Replace Expert Judgment**: Outputs are decision-support tools, not automated decision-makers
+- **Generate Policy Prescriptions**: The framework analyzes initiatives but does not recommend specific policies
+- **Perform Causal Inference**: The framework identifies correlations but does not establish causal relationships from observational data
+- **Handle Real-Time Data**: Current implementation uses static data, not live feeds or streaming data
+- **Geographic Modeling**: Spatial analysis is planned but not yet implemented
+- **Longitudinal Tracking**: The framework evaluates initiatives but does not track outcomes over time
+
+These boundaries help manage expectations and ensure appropriate use of the framework.
+
+---
+
+## Methodological Risks
+
+Beyond the technical limitations, the framework faces several methodological risks that users should consider:
+
+- **Weight Sensitivity**: MCDA results can be sensitive to weight assignments. Small changes in criteria weights may produce different rankings. Sensitivity analysis is recommended.
+- **Expert Bias**: Weights and synergy coefficients may reflect expert biases or cultural perspectives. Diverse expert input and calibration are essential.
+- **Data Quality Dependence**: Framework outputs are only as good as the input data. Inaccurate or incomplete project parameters will produce unreliable scores.
+- **Structural Uncertainty**: The graph-based model may not capture all SDG interactions. Some relationships may be non-linear or context-dependent.
+- **Context Specificity**: Synergy coefficients calibrated for one region may not apply to different geographic or cultural contexts.
+- **Aggregation Bias**: Linear aggregation of scores may mask important tradeoffs or non-linear interactions between components.
+- **Over-precision**: Numerical scores may create false precision. Results should be interpreted as directional guidance rather than exact measurements.
+
+These risks underscore the importance of using framework outputs as decision support rather than automated decision-making.
+
+---
+
 ## Limitations
 
 Current limitations include:
@@ -530,17 +744,19 @@ Results should be interpreted as decision-support outputs rather than policy rec
 
 ## Validation Strategy
 
-### Internal Validation
+### Current Validation
 
-- Unit testing
-- Sensitivity analysis
-- Monte Carlo robustness tests
+- **Unit Testing**: Comprehensive test coverage for graph algorithms, scoring engines, and MCDA methods
+- **Scenario Consistency Checks**: Validation of logical consistency across different input scenarios
+- **Sensitivity Analysis**: Testing robustness to parameter variations and weight changes
+- **Monte Carlo Robustness Tests**: Uncertainty quantification through stochastic sampling
 
-### External Validation
+### Future Validation
 
-- Comparison with published SDG studies
-- Expert review
-- Case-study benchmarking
+- **Expert Review**: Domain expert evaluation of methodology and recommendations
+- **Real-World Case Studies**: Application to actual SDG projects with outcome tracking
+- **Longitudinal Evaluation**: Long-term assessment of recommendation accuracy
+- **Benchmark Studies**: Comparison with published SDG research and alternative frameworks
 
 ---
 
@@ -566,7 +782,7 @@ If you use this framework in your research, please cite:
 @software{sdg_decision_intelligence_framework,
   title = {SDG Decision Intelligence Framework},
   author = {{LeonZZlambda (GitHub: LeonZZlambda)}},
-  year = {2024},
+  year = {2026},
   url = {https://github.com/LeonZZlambda/SDG_Atlas-Government},
   version = {0.1.0}
 }
