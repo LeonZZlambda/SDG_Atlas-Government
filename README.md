@@ -1,8 +1,9 @@
 # SDG Decision Intelligence Framework
 
- [![i18n](https://img.shields.io/badge/i18n-✔-green)](https://github.com/i18next/i18next)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
+[![Preact](https://img.shields.io/badge/Preact-10.29-royalblue)](https://preactjs.com/)[![i18n](https://img.shields.io/badge/i18n-✔-green)](https://github.com/i18next/i18next)
 
----
 
 ## Features
 
@@ -22,15 +23,7 @@
 
 ---
 
-
-
----
-
 An open-source Decision Intelligence Framework for designing, evaluating, and optimizing Sustainable Development Goal portfolios through graph analytics, multi-criteria decision analysis, simulation, and impact modeling.
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
-[![Preact](https://img.shields.io/badge/Preact-10.29-royalblue)](https://preactjs.com/)
 
 ---
 
