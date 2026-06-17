@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { usePlatform } from '../context/PlatformContext';
+import { useTranslation } from '../i18n';
 import { SDG_METADATA, getCoefficient } from '../utils/projectGenerator';
 import { type Graph } from '../utils/graphAlgorithms';
 
@@ -9,6 +10,9 @@ interface WhatIfSimulationProps {
 
 export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
   const { state, dispatch } = usePlatform();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'pt-BR';
+  const langKey: 'pt' | 'en' | 'es' = currentLang.startsWith('en') ? 'en' : currentLang.startsWith('es') ? 'es' : 'pt';
   const [simulatedSDGs, setSimulatedSDGs] = useState<number[]>([...state.selectedOds]);
   const [simulatedBudget, setSimulatedBudget] = useState(state.inputs.budget);
   const [simulatedTeamSize, setSimulatedTeamSize] = useState(state.inputs.teamSize);
@@ -20,7 +24,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
     const graph: Graph = {
       nodes: sdgs.map(id => ({
         id,
-        label: SDG_METADATA.find(s => s.id === id)?.name.pt || `ODS ${id}`,
+        label: SDG_METADATA.find(s => s.id === id)?.name[langKey] || `ODS ${id}`,
       })),
       edges: [],
     };
@@ -133,9 +137,9 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
         {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
-            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>Simulação What-If</h2>
+            <h2 style={{ fontSize: 18, fontWeight: 800, margin: 0 }}>{t('whatif_title')}</h2>
             <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '4px 0 0' }}>
-              Análise de cenários: modifique parâmetros e visualize o impacto instantâneo
+              {t('whatif_subtitle')}
             </p>
           </div>
           <button
@@ -155,7 +159,9 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
 
         {/* SDG Selection */}
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>Seleção de ODS ({simulatedSDGs.length} selecionados)</div>
+          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>
+            {t('whatif_sdg_selection')} ({simulatedSDGs.length} {t('whatif_selected')})
+          </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: 8 }}>
             {SDG_METADATA.map(sdg => (
               <button
@@ -181,10 +187,10 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
 
         {/* Parameter Controls */}
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>Parâmetros do Projeto</div>
+          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{t('whatif_project_params')}</div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
             <div>
-              <label style={{ fontSize: 9, fontWeight: 600, marginBottom: 4, display: 'block' }}>Orçamento (USD)</label>
+              <label style={{ fontSize: 9, fontWeight: 600, marginBottom: 4, display: 'block' }}>{t('whatif_budget')}</label>
               <input
                 type="number"
                 value={simulatedBudget}
@@ -199,7 +205,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
               />
             </div>
             <div>
-              <label style={{ fontSize: 9, fontWeight: 600, marginBottom: 4, display: 'block' }}>Tamanho da Equipe</label>
+              <label style={{ fontSize: 9, fontWeight: 600, marginBottom: 4, display: 'block' }}>{t('whatif_team_size')}</label>
               <input
                 type="number"
                 value={simulatedTeamSize}
@@ -214,7 +220,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
               />
             </div>
             <div>
-              <label style={{ fontSize: 9, fontWeight: 600, marginBottom: 4, display: 'block' }}>Duração (meses)</label>
+              <label style={{ fontSize: 9, fontWeight: 600, marginBottom: 4, display: 'block' }}>{t('whatif_duration')}</label>
               <input
                 type="number"
                 value={simulatedDuration}
@@ -229,7 +235,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
               />
             </div>
             <div>
-              <label style={{ fontSize: 9, fontWeight: 600, marginBottom: 4, display: 'block' }}>Beneficiários</label>
+              <label style={{ fontSize: 9, fontWeight: 600, marginBottom: 4, display: 'block' }}>{t('whatif_beneficiaries')}</label>
               <input
                 type="number"
                 value={simulatedBeneficiaries}
@@ -248,7 +254,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
 
         {/* Scenario Comparison: Impact of Adding Each SDG */}
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>Comparação de Cenários: Adicionar ODS</div>
+          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{t('whatif_scenario_comparison')}</div>
           <div style={{
             borderRadius: 12,
             background: 'var(--bg-glass)',
@@ -258,15 +264,15 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: 'rgba(0,0,0,0.03)' }}>
-                  <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700 }}>Cenário</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>Impacto</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>Sustentabilidade</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>Mudança</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700 }}>{t('whatif_scenario')}</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{t('whatif_impact')}</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{t('whatif_sustainability')}</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{t('whatif_change')}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
-                  <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>Atual</td>
+                  <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>{t('whatif_current')}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{originalImpact.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{originalSustainability.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, color: 'var(--text-muted)' }}>—</td>
@@ -304,7 +310,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
 
         {/* Before/After Comparison */}
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>Comparação: Antes vs Depois</div>
+          <div style={{ fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{t('whatif_before_after')}</div>
           <div style={{
             borderRadius: 12,
             background: 'var(--bg-glass)',
@@ -314,15 +320,15 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
                 <tr style={{ background: 'rgba(0,0,0,0.03)' }}>
-                  <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700 }}>Métrica</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>Antes</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>Depois</th>
-                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>Mudança</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700 }}>{t('whatif_metric')}</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{t('whatif_before')}</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{t('whatif_after')}</th>
+                  <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{t('whatif_change')}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
-                  <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>Impact Score</td>
+                  <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>{t('whatif_impact')}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalImpact.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{simulatedMetrics.impact.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>
@@ -332,7 +338,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
-                  <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>Sustainability</td>
+                  <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>{t('whatif_sustainability')}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalSustainability.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{simulatedMetrics.sustainability.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>
@@ -352,7 +358,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
-                  <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>Alcance Projetado</td>
+                  <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>{t('whatif_projected_reach')}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalReach.toLocaleString()}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{simulatedMetrics.reach.toLocaleString()}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>
@@ -391,7 +397,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
               cursor: 'pointer',
             }}
           >
-            Cancelar
+            {t('whatif_cancel')}
           </button>
           <button
             onClick={applySimulation}
@@ -406,7 +412,7 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
               cursor: 'pointer',
             }}
           >
-            Aplicar Simulação
+            {t('whatif_apply')}
           </button>
         </div>
       </div>

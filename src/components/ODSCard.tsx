@@ -10,9 +10,9 @@ interface ODSCardProps {
   isSelected: boolean;
   onToggle: () => void;
   analyticalMetadata?: {
-    complexity: 'Baixa' | 'Média' | 'Alta';
-    systemicImpact: 'Baixo' | 'Médio' | 'Elevado';
-    institutionalDependency: 'Baixa' | 'Média' | 'Alta';
+    complexity: 'low' | 'medium' | 'high';
+    systemicImpact: 'low' | 'medium' | 'high';
+    institutionalDependency: 'low' | 'medium' | 'high';
     strongSynergies: number[];
   };
 }
@@ -104,7 +104,7 @@ export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle, anal
           lineHeight: 1.3,
           fontFamily: 'var(--font-heading)',
           color: 'inherit',
-        }}>
+         }}>
           {id}. {name}
         </h3>
         <p style={{
@@ -135,35 +135,35 @@ export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle, anal
                 {t('card_complexity')}:
               </span>
               <span style={{ 
-                color: analyticalMetadata.complexity === 'Alta' ? '#dc2626' : 
-                       analyticalMetadata.complexity === 'Média' ? '#d97706' : '#059669',
+                color: analyticalMetadata.complexity === 'high' ? '#dc2626' : 
+                       analyticalMetadata.complexity === 'medium' ? '#d97706' : '#059669',
                 fontWeight: 700 
               }}>
-                {analyticalMetadata.complexity}
+                {t(`card_complexity_${analyticalMetadata.complexity}`)}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600 }}>
-                Impacto Sistêmico:
+                {t('card_systemic_impact')}
               </span>
               <span style={{ 
-                color: analyticalMetadata.systemicImpact === 'Elevado' ? '#059669' : 
-                       analyticalMetadata.systemicImpact === 'Médio' ? '#d97706' : '#4f46e5',
+                color: analyticalMetadata.systemicImpact === 'high' ? '#dc2626' : 
+                       analyticalMetadata.systemicImpact === 'medium' ? '#d97706' : '#059669',
                 fontWeight: 700 
               }}>
-                {analyticalMetadata.systemicImpact}
+                {t(`card_impact_${analyticalMetadata.systemicImpact}`)}
               </span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600 }}>
-                Dep. Institucional:
+                {t('card_institutional_dependency')}
               </span>
               <span style={{ 
-                color: analyticalMetadata.institutionalDependency === 'Alta' ? '#dc2626' : 
-                       analyticalMetadata.institutionalDependency === 'Média' ? '#d97706' : '#059669',
+                color: analyticalMetadata.institutionalDependency === 'high' ? '#dc2626' : 
+                       analyticalMetadata.institutionalDependency === 'medium' ? '#d97706' : '#059669',
                 fontWeight: 700 
               }}>
-                {analyticalMetadata.institutionalDependency}
+                {t(`card_dependency_${analyticalMetadata.institutionalDependency}`)}
               </span>
             </div>
             {analyticalMetadata.strongSynergies.length > 0 && (
@@ -176,7 +176,7 @@ export function ODSCard({ id, name, shortDesc, color, isSelected, onToggle, anal
                 boxShadow: 'inset 0 1px 0 var(--border-dark)'
               }}>
                 <span style={{ color: isSelected ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600 }}>
-                  Sinergia Forte:
+                  {t('card_strong_synergy')}
                 </span>
                 <span style={{ color: '#059669', fontWeight: 700 }}>
                   ODS {analyticalMetadata.strongSynergies.join(', ')}

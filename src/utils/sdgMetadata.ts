@@ -1,4 +1,5 @@
 import { getCoefficient } from './projectGenerator';
+import i18n from '../i18n';
 
 /**
  * SDG Analytical Metadata Generator
@@ -6,9 +7,9 @@ import { getCoefficient } from './projectGenerator';
  */
 
 export interface SDGAnalyticalMetadata {
-  complexity: 'Baixa' | 'Média' | 'Alta';
-  systemicImpact: 'Baixo' | 'Médio' | 'Elevado';
-  institutionalDependency: 'Baixa' | 'Média' | 'Alta';
+  complexity: 'low' | 'medium' | 'high';
+  systemicImpact: 'low' | 'medium' | 'high';
+  institutionalDependency: 'low' | 'medium' | 'high';
   strongSynergies: number[];
 }
 
@@ -32,7 +33,7 @@ export function generateSDGMetadata(sdgId: number): SDGAnalyticalMetadata {
 /**
  * Calculate complexity based on SDG characteristics
  */
-function calculateComplexity(sdgId: number): 'Baixa' | 'Média' | 'Alta' {
+function calculateComplexity(sdgId: number): 'low' | 'medium' | 'high' {
   // SDGs with high implementation complexity
   const highComplexity = [7, 9, 11, 13, 14, 15]; // Energy, Industry, Cities, Climate, Life Below Water, Life on Land
   // SDGs with medium complexity
@@ -40,15 +41,15 @@ function calculateComplexity(sdgId: number): 'Baixa' | 'Média' | 'Alta' {
   // SDGs with lower complexity
   // const lowComplexity = [1, 5, 16, 17]; // Poverty, Gender, Peace, Partnerships
   
-  if (highComplexity.includes(sdgId)) return 'Alta';
-  if (mediumComplexity.includes(sdgId)) return 'Média';
-  return 'Baixa';
+  if (highComplexity.includes(sdgId)) return 'high';
+  if (mediumComplexity.includes(sdgId)) return 'medium';
+  return 'low';
 }
 
 /**
  * Calculate systemic impact based on SDG influence
  */
-function calculateSystemicImpact(sdgId: number): 'Baixo' | 'Médio' | 'Elevado' {
+function calculateSystemicImpact(sdgId: number): 'low' | 'medium' | 'high' {
   // SDGs with high systemic impact (cross-cutting goals)
   const highImpact = [1, 5, 8, 13, 17]; // Poverty, Gender, Work, Climate, Partnerships
   // SDGs with medium systemic impact
@@ -56,15 +57,15 @@ function calculateSystemicImpact(sdgId: number): 'Baixo' | 'Médio' | 'Elevado' 
   // SDGs with lower systemic impact
   // const lowImpact = [14, 15, 16]; // Life Below Water, Life on Land, Peace
   
-  if (highImpact.includes(sdgId)) return 'Elevado';
-  if (mediumImpact.includes(sdgId)) return 'Médio';
-  return 'Baixo';
+  if (highImpact.includes(sdgId)) return 'high';
+  if (mediumImpact.includes(sdgId)) return 'medium';
+  return 'low';
 }
 
 /**
  * Calculate institutional dependency based on governance requirements
  */
-function calculateInstitutionalDependency(sdgId: number): 'Baixa' | 'Média' | 'Alta' {
+function calculateInstitutionalDependency(sdgId: number): 'low' | 'medium' | 'high' {
   // SDGs requiring high institutional coordination
   const highDependency = [11, 13, 14, 15, 16, 17]; // Cities, Climate, Water, Land, Peace, Partnerships
   // SDGs with medium institutional requirements
@@ -72,9 +73,9 @@ function calculateInstitutionalDependency(sdgId: number): 'Baixa' | 'Média' | '
   // SDGs with lower institutional requirements
   // const lowDependency = [1, 5]; // Poverty, Gender
   
-  if (highDependency.includes(sdgId)) return 'Alta';
-  if (mediumDependency.includes(sdgId)) return 'Média';
-  return 'Baixa';
+  if (highDependency.includes(sdgId)) return 'high';
+  if (mediumDependency.includes(sdgId)) return 'medium';
+  return 'low';
 }
 
 /**
@@ -150,8 +151,8 @@ function analyzeSynergies(selectedSDGs: number[]): SystemicInsight | null {
     return {
       type: 'synergy',
       severity: strongSynergyCount > 3 ? 'high' : 'medium',
-      title: 'Sinergias Fortes Detectadas',
-      description: `${strongSynergyCount} par(es) de ODS com forte sinergia identificado(s). Isso indica potencial para impacto multiplicador.`,
+      title: i18n.t('sdg_strong_synergies'),
+      description: `${strongSynergyCount} ${i18n.t('sdg_strong_synergies_desc')}`,
       affectedSDGs: selectedSDGs
     };
   }
@@ -160,8 +161,8 @@ function analyzeSynergies(selectedSDGs: number[]): SystemicInsight | null {
     return {
       type: 'synergy',
       severity: 'high',
-      title: 'Conflitos Potenciais Identificados',
-      description: `${conflictCount} conflito(s) potencial(ais) entre ODS selecionados. Requer análise de tradeoffs.`,
+      title: i18n.t('sdg_conflicts_detected'),
+      description: `${conflictCount} ${i18n.t('sdg_conflicts_detected_desc')}`,
       affectedSDGs: selectedSDGs
     };
   }
@@ -173,14 +174,14 @@ function analyzeSynergies(selectedSDGs: number[]): SystemicInsight | null {
  * Analyze institutional dependencies
  */
 function analyzeDependencies(selectedSDGs: number[]): SystemicInsight | null {
-  const highDependencySDGs = selectedSDGs.filter(id => calculateInstitutionalDependency(id) === 'Alta');
+  const highDependencySDGs = selectedSDGs.filter(id => calculateInstitutionalDependency(id) === 'high');
   
   if (highDependencySDGs.length >= 2) {
     return {
       type: 'dependency',
       severity: 'high',
-      title: 'Alta Dependência Institucional',
-      description: `${highDependencySDGs.length} ODS com alta dependência institucional. Coordenação interinstitucional crítica para sucesso.`,
+      title: i18n.t('sdg_high_dependency'),
+      description: `${highDependencySDGs.length} ${i18n.t('sdg_high_dependency_desc')}`,
       affectedSDGs: highDependencySDGs
     };
   }
@@ -189,8 +190,8 @@ function analyzeDependencies(selectedSDGs: number[]): SystemicInsight | null {
     return {
       type: 'dependency',
       severity: 'medium',
-      title: 'Dependência Institucional Moderada',
-      description: '1 ODS com alta dependência institucional. Requer coordenação específica.',
+      title: i18n.t('sdg_moderate_dependency'),
+      description: i18n.t('sdg_moderate_dependency_desc'),
       affectedSDGs: highDependencySDGs
     };
   }
@@ -212,21 +213,24 @@ function analyzeThematicDiversity(selectedSDGs: number[]): SystemicInsight | nul
   });
   
   if (categories.size >= 3) {
+    const categoriesTranslated = Array.from(categories).map(cat => i18n.t(`sdg_category_${cat}`)).join(', ');
     return {
       type: 'diversity',
       severity: 'medium',
-      title: 'Diversidade Temática Elevada',
-      description: `Abordagem ${categories.size} categorias temáticas. Aumenta complexidade operacional mas potencializa impacto holístico.`,
+      title: i18n.t('sdg_high_diversity'),
+      description: `${categories.size} ${i18n.t('sdg_high_diversity_desc')} (${categoriesTranslated})`,
       affectedSDGs: selectedSDGs
     };
   }
   
   if (categories.size === 1) {
+    const categoryName = Array.from(categories)[0];
+    const categoryTranslated = i18n.t(`sdg_category_${categoryName}`);
     return {
       type: 'diversity',
       severity: 'low',
-      title: 'Foco Temático Concentrado',
-      description: `Abordagem focada em ${Array.from(categories)[0]}. Permite especialização mas pode limitar impacto sistêmico.`,
+      title: i18n.t('sdg_focused_theme'),
+      description: `${i18n.t('sdg_focused_theme_prefix')} ${categoryTranslated}${i18n.t('sdg_focused_theme_suffix')}`,
       affectedSDGs: selectedSDGs
     };
   }
@@ -238,15 +242,15 @@ function analyzeThematicDiversity(selectedSDGs: number[]): SystemicInsight | nul
  * Analyze overall complexity
  */
 function analyzeComplexity(selectedSDGs: number[]): SystemicInsight | null {
-  const highComplexitySDGs = selectedSDGs.filter(id => calculateComplexity(id) === 'Alta');
+  const highComplexitySDGs = selectedSDGs.filter(id => calculateComplexity(id) === 'high');
   const complexityRatio = highComplexitySDGs.length / selectedSDGs.length;
   
   if (complexityRatio > 0.5) {
     return {
       type: 'complexity',
       severity: 'high',
-      title: 'Complexidade Operacional Elevada',
-      description: `${highComplexitySDGs.length} de ${selectedSDGs.length} ODS com alta complexidade. Requer capacidade técnica robusta.`,
+      title: i18n.t('sdg_high_complexity'),
+      description: `${highComplexitySDGs.length} de ${selectedSDGs.length} ${i18n.t('sdg_high_complexity_desc')}`,
       affectedSDGs: highComplexitySDGs
     };
   }
@@ -255,8 +259,8 @@ function analyzeComplexity(selectedSDGs: number[]): SystemicInsight | null {
     return {
       type: 'complexity',
       severity: 'medium',
-      title: 'Complexidade Operacional Moderada',
-      description: `${highComplexitySDGs.length} ODS com alta complexidade. Planejamento detalhado recomendado.`,
+      title: i18n.t('sdg_moderate_complexity'),
+      description: `${highComplexitySDGs.length} ${i18n.t('sdg_moderate_complexity_desc')}`,
       affectedSDGs: highComplexitySDGs
     };
   }

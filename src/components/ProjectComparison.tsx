@@ -183,13 +183,13 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
 
     return {
       metrics: [
-        { label: 'Impact', key: 'overallImpactScore', max: 100, path: 'generatedData' },
-        { label: 'Sustainability', key: 'sustainabilityIndex', max: 100, path: 'generatedData' },
-        { label: 'Alignment', key: 'alignmentScore', max: 100, path: 'generatedData' },
-        { label: 'Budget (K)', key: 'budget', max: 1000, format: (v: number) => `$${(v / 1000).toFixed(0)}K`, path: 'inputs' },
-        { label: 'Duration (mo)', key: 'duration', max: 36, path: 'inputs' },
-        { label: 'Beneficiaries', key: 'beneficiaries', max: 100000, format: (v: number) => v.toLocaleString(), path: 'inputs' },
-        { label: 'Trade-offs', key: 'tradeoffs', max: 10, format: (v: any) => v.length, path: 'generatedData' },
+        { label: t('whatif_impact'), key: 'overallImpactScore', max: 100, path: 'generatedData' },
+        { label: t('whatif_sustainability'), key: 'sustainabilityIndex', max: 100, path: 'generatedData' },
+        { label: t('planner_alignment_ods'), key: 'alignmentScore', max: 100, path: 'generatedData' },
+        { label: `${t('dashboard_budget_label')} (K)`, key: 'budget', max: 1000, format: (v: number) => `$${(v / 1000).toFixed(0)}K`, path: 'inputs' },
+        { label: `${t('dashboard_duration_label')} (mo)`, key: 'duration', max: 36, path: 'inputs' },
+        { label: t('dashboard_beneficiaries_label'), key: 'beneficiaries', max: 100000, format: (v: number) => v.toLocaleString(), path: 'inputs' },
+        { label: t('dashboard_tradeoffs_label'), key: 'tradeoffs', max: 10, format: (v: any) => v.length, path: 'generatedData' },
       ],
     };
   };
@@ -423,7 +423,7 @@ export function ProjectComparison({ onClose }: ProjectComparisonProps) {
             color: 'var(--text-muted)',
             fontSize: 12,
           }}>
-            Selecione pelo menos 2 projetos para comparar
+            {t('comparison_min_projects')}
           </div>
         )}
       </div>

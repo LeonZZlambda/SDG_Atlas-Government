@@ -159,7 +159,7 @@ export const usePlatformStore = create<PlatformStore>()(
           Logger.error('Failed saving project to localStorage:', e);
         }
         
-        get().addToast('Projeto salvo com sucesso!', 'success');
+        get().addToast(i18next.t('toast_project_saved'), 'success');
       },
 
       deleteProject: (id) => {
@@ -173,7 +173,7 @@ export const usePlatformStore = create<PlatformStore>()(
           Logger.error('Failed deleting project from localStorage:', e);
         }
         
-        get().addToast('Projeto excluído.', 'info');
+        get().addToast(i18next.t('toast_project_deleted'), 'info');
       },
 
       completeOnboarding: () => {

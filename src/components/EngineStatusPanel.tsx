@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { usePlatform } from '../context/PlatformContext';
+import { useTranslation } from '../i18n';
 import {
   calculateDegreeCentrality,
   calculateBetweennessCentrality,
@@ -541,6 +542,7 @@ function EngineCard({ engine, expanded, onToggle, drivers }: {
 
 export function EngineStatusPanel() {
   const { state } = usePlatform();
+  const { t } = useTranslation();
   const [expandedInsight, setExpandedInsight] = useState<number | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -589,60 +591,60 @@ export function EngineStatusPanel() {
       case 'graph':
         // Graph Engine Drivers
         if (graphStats?.density && graphStats.density > 0.5) {
-          positive.push(`Alta densidade de rede (${(graphStats.density * 100).toFixed(0)}%)`);
+          positive.push(t('engine_high_network_density', { percent: (graphStats.density * 100).toFixed(0) }));
         }
         if (positiveEdges > graph.edges.length * 0.7) {
-          positive.push('Fortes conexões sinérgicas entre ODS');
+          positive.push(t('engine_strong_synergies'));
         }
         if (degCentrality) {
           const avgDeg = Array.from(degCentrality.values()).reduce((a, b) => a + b, 0) / degCentrality.size;
           if (avgDeg > 0.5) {
-            positive.push('Alta centralidade média dos nós');
+            positive.push(t('engine_high_centrality'));
           }
         }
         if (selectedSDGs.length < 4) {
-          negative.push('Tamanho limitado da rede');
+          negative.push(t('engine_limited_network_size'));
         }
         if (negativeEdges > 0) {
-          negative.push(`${negativeEdges} trade-off${negativeEdges > 1 ? 's' : ''} detectado${negativeEdges > 1 ? 's' : ''}`);
+          negative.push(t(negativeEdges === 1 ? 'engine_tradeoffs_detected' : 'engine_tradeoffs_detected_plural', { count: negativeEdges }));
         }
         if (graphStats?.averageClusteringCoefficient && graphStats.averageClusteringCoefficient < 0.3) {
-          negative.push('Baixo coeficiente de agrupamento');
+          negative.push(t('engine_low_clustering'));
         }
         break;
         
       case 'mcda':
         // MCDA Engine Drivers
         if (sbi && sbi > 0.6) {
-          positive.push('Alto índice de sinergia (SBI)');
+          positive.push(t('engine_high_sbi'));
         }
         if (selectedSDGs.length >= 4 && selectedSDGs.length <= 7) {
-          positive.push('Amplitude ideal de metas');
+          positive.push(t('engine_ideal_goals_range'));
         }
         if (project && project.tradeoffs.length === 0) {
-          positive.push('Zero trade-offs detectados');
+          positive.push(t('engine_zero_tradeoffs'));
         }
         if (selectedSDGs.length < 3) {
-          negative.push('Baixa amplitude de metas');
+          negative.push(t('engine_low_goals_range'));
         }
         if (sbi && sbi < 0) {
-          negative.push('Predominância de trade-offs');
+          negative.push(t('engine_tradeoffs_predominance'));
         }
         if (selectedSDGs.length > 10) {
-          negative.push('Alta complexidade de coordenação');
+          negative.push(t('engine_high_coordination_complexity'));
         }
         break;
         
       case 'impact':
         // Impact Engine Drivers
         if (project && project.overallImpactScore >= 70) {
-          positive.push('Alto score de impacto sistêmico');
+          positive.push(t('engine_high_impact_score'));
         }
         if (positiveEdges > 0) {
-          positive.push(`+${positiveEdges} conexões de influência positiva`);
+          positive.push(t('engine_positive_connections', { count: positiveEdges }));
         }
         if (sbi && sbi > 0.5) {
-          positive.push('Forte multiplicador de sinergia');
+          positive.push(t('engine_synergy_multiplier'));
         }
         // Add dominant SDG driver based on Systemic Influence Score
         if (degCentrality && betweennessCentrality) {
@@ -652,42 +654,42 @@ export function EngineStatusPanel() {
           }));
           const maxInfluence = systemicInfluences.reduce((a, b) => a.score > b.score ? a : b);
           if (maxInfluence.score > 0.3) {
-            positive.push(`ODS ${maxInfluence.id} domina influência sistêmica`);
+            positive.push(t('engine_dominates_systemic_influence', { id: maxInfluence.id }));
           }
         }
         if (project && project.tradeoffs.length > 0) {
-          negative.push(`${project.tradeoffs.length} conflito${project.tradeoffs.length > 1 ? 's' : ''} reduzindo impacto`);
+          negative.push(t(project.tradeoffs.length === 1 ? 'engine_conflicts_reducing_impact' : 'engine_conflicts_reducing_impact_plural', { count: project.tradeoffs.length }));
         }
         if (selectedSDGs.length < 3) {
-          negative.push('Baixa diversidade temática');
+          negative.push(t('engine_low_thematic_diversity'));
         }
         if (state.inputs.beneficiaries < 1000) {
-          negative.push('Alcance limitado de beneficiários');
+          negative.push(t('engine_limited_beneficiary_reach'));
         }
         break;
         
       case 'sustain':
         // Sustainability Engine Drivers
         if (project && project.sustainabilityIndex >= 70) {
-          positive.push('Alta resiliência sistêmica');
+          positive.push(t('engine_high_resilience'));
         }
         if (negativeEdges === 0) {
-          positive.push('Zero conflitos estruturais');
+          positive.push(t('engine_zero_structural_conflicts'));
         }
         if (graphStats?.averageClusteringCoefficient && graphStats.averageClusteringCoefficient > 0.5) {
-          positive.push('Alta coesão de rede');
+          positive.push(t('engine_high_network_cohesion'));
         }
         if (state.inputs.duration >= 12) {
-          positive.push('Horizonte temporal adequado');
+          positive.push(t('engine_adequate_time_horizon'));
         }
         if (project && project.tradeoffs.length > 0) {
-          negative.push('Conflitos afetando sustentabilidade');
+          negative.push(t('engine_conflicts_affecting_sustainability'));
         }
         if (selectedSDGs.length < 4) {
-          negative.push('Baixa redundância de rede');
+          negative.push(t('engine_low_network_redundancy'));
         }
         if (state.inputs.teamSize < 5) {
-          negative.push('Capacidade de equipe limitada');
+          negative.push(t('engine_limited_team_capacity'));
         }
         break;
     }
@@ -962,7 +964,7 @@ export function EngineStatusPanel() {
               sdgId: sdgA,
               type: 'remove',
               expectedImpact: -Math.round(conflictsA * 5),
-              reason: `Reduz conflitos sistêmicos com ${conflictsA} outros ODS`,
+              reason: t('engine_reduces_systemic_conflicts', { count: conflictsA }),
               priority: 'low',
             });
           } else if (conflictsB > conflictsA && conflictsB > 1) {
@@ -970,7 +972,7 @@ export function EngineStatusPanel() {
               sdgId: sdgB,
               type: 'remove',
               expectedImpact: -Math.round(conflictsB * 5),
-              reason: `Reduz conflitos sistêmicos com ${conflictsB} outros ODS`,
+              reason: t('engine_reduces_systemic_conflicts', { count: conflictsB }),
               priority: 'low',
             });
           }
@@ -1001,8 +1003,8 @@ export function EngineStatusPanel() {
       if (maxInfluence.score > 0.3) {
         insights.push({
           type: 'opportunity',
-          title: `ODS ${maxInfluence.id} é o driver sistêmico dominante`,
-          description: `Systemic Influence Score de ${(maxInfluence.score * 100).toFixed(1)}% combina centralidade de grau, intermediação e influência positiva`,
+          title: t('engine_dominant_driver', { id: maxInfluence.id }),
+          description: t('engine_dominant_driver_desc', { score: (maxInfluence.score * 100).toFixed(1) }),
           priority: 'high',
         });
       }
@@ -1012,8 +1014,8 @@ export function EngineStatusPanel() {
     if (negativeEdges === 0 && positiveEdges > 0) {
       insights.push({
         type: 'opportunity',
-        title: 'Configuração otimizada: zero trade-offs',
-        description: 'A configuração atual apresenta forte sinergia e zero conflitos estruturais, maximizando potencial de impacto',
+        title: t('engine_optimized_config'),
+        description: t('engine_optimized_config_desc'),
         priority: 'high',
       });
     }
@@ -1022,8 +1024,8 @@ export function EngineStatusPanel() {
     if (emergentImpact >= 70) {
       insights.push({
         type: 'opportunity',
-        title: 'Alto multiplicador de impacto sistêmico',
-        description: 'A configuração atual apresenta forte potencial de impacto cascata através das interconexões ODS',
+        title: t('engine_high_impact_multiplier'),
+        description: t('engine_high_impact_multiplier_desc'),
         priority: 'high',
       });
     }
@@ -1031,8 +1033,8 @@ export function EngineStatusPanel() {
     if (positiveEdges > selectedSDGs.length) {
       insights.push({
         type: 'opportunity',
-        title: 'Fortes efeitos multiplicadores detectados',
-        description: 'Número de sinergias positivas excede o número de ODS, indicando amplificação de impacto',
+        title: t('engine_strong_multiplier_effects'),
+        description: t('engine_strong_multiplier_effects_desc'),
         priority: 'medium',
       });
     }
@@ -1040,8 +1042,8 @@ export function EngineStatusPanel() {
     if (sbi && sbi > 0.6) {
       insights.push({
         type: 'opportunity',
-        title: 'Alta coerência de sinergia sistêmica',
-        description: 'O portfólio apresenta forte alinhamento entre metas, maximizando impactos positivos',
+        title: t('engine_strong_synergy_coherence'),
+        description: t('engine_strong_synergy_coherence_desc'),
         priority: 'high',
       });
     }
@@ -1050,8 +1052,8 @@ export function EngineStatusPanel() {
     if (project.tradeoffs.length > 2) {
       insights.push({
         type: 'risk',
-        title: 'Alta dependência institucional',
-        description: 'Múltiplos trade-offs sistêmicos requerem coordenação institucional complexa',
+        title: t('engine_high_institutional_dependency'),
+        description: t('engine_high_institutional_dependency_desc'),
         priority: 'high',
       });
     }
@@ -1059,8 +1061,8 @@ export function EngineStatusPanel() {
     if (feasibility < 50) {
       insights.push({
         type: 'risk',
-        title: 'Complexidade excessiva de implementação',
-        description: 'A viabilidade de implementação é limitada pela complexidade institucional e operacional',
+        title: t('engine_excessive_implementation_complexity'),
+        description: t('engine_excessive_implementation_complexity_desc'),
         priority: 'high',
       });
     }
@@ -1068,8 +1070,8 @@ export function EngineStatusPanel() {
     if (selectedSDGs.length > 7) {
       insights.push({
         type: 'risk',
-        title: 'Sobrecarga de coordenação',
-        description: 'Número elevado de ODS pode dificultar gestão e foco estratégico',
+        title: t('engine_coordination_overload'),
+        description: t('engine_coordination_overload_desc'),
         priority: 'medium',
       });
     }
@@ -1078,8 +1080,8 @@ export function EngineStatusPanel() {
     if (project.sustainabilityIndex < 50) {
       insights.push({
         type: 'risk',
-        title: 'Sustentabilidade limitada por baixa diversidade',
-        description: 'Adicionar ODS ambientais pode melhorar resiliência sistêmica e viabilidade de longo prazo',
+        title: t('engine_limited_sustainability_diversity'),
+        description: t('engine_limited_sustainability_diversity_desc'),
         priority: 'high',
       });
     }
@@ -1088,8 +1090,8 @@ export function EngineStatusPanel() {
     if (selectedSDGs.length <= 3) {
       insights.push({
         type: 'consideration',
-        title: 'Beneficia de implementação em fases',
-        description: 'Portfólio compacto permite expansão gradual e aprendizado iterativo',
+        title: t('engine_phased_implementation'),
+        description: t('engine_phased_implementation_desc'),
         priority: 'medium',
       });
     }
@@ -1097,8 +1099,8 @@ export function EngineStatusPanel() {
     if (!selectedSDGs.some(id => id === 16 || id === 17)) {
       insights.push({
         type: 'consideration',
-        title: 'Requer parcerias municipais',
-        description: 'Ausência de ODS de governança indica necessidade de alinhamento institucional',
+        title: t('engine_requires_municipal_partnerships'),
+        description: t('engine_requires_municipal_partnerships_desc'),
         priority: 'high',
       });
     }
@@ -1106,8 +1108,8 @@ export function EngineStatusPanel() {
     if (state.inputs.duration < 12) {
       insights.push({
         type: 'consideration',
-        title: 'Considerar extensão de prazo',
-        description: 'Duração curta pode limitar sustentabilidade de longo prazo dos impactos',
+        title: t('engine_consider_deadline_extension'),
+        description: t('engine_consider_deadline_extension_desc'),
         priority: 'low',
       });
     }
@@ -1138,27 +1140,27 @@ export function EngineStatusPanel() {
         { 
           label: 'Degree Centrality', 
           expr: 'C(v) = deg(v) / (n - 1)',
-          explanation: 'Mede a conectividade direta de um nó em relação ao total possível de conexões'
+          explanation: t('engine_expl_degree_centrality')
         },
         { 
           label: 'Betweenness Centrality', 
           expr: 'B(v) = Σ σ_st(v) / σ_st',
-          explanation: 'Quantifica quantas vezes um nó aparece nos caminhos mais curtos entre outros nós'
+          explanation: t('engine_expl_betweenness_centrality')
         },
         { 
           label: 'PageRank', 
           expr: 'PR(v) = (1-d)/n + d·Σ PR(u)/L(u)',
-          explanation: 'Algoritmo de Google que classifica influência baseado em links de qualidade'
+          explanation: t('engine_expl_pagerank')
         },
         { 
           label: 'Clustering Coefficient', 
           expr: 'C = 2·triangles / k·(k-1)',
-          explanation: 'Mede o quão conectados são os vizinhos de um nó entre si'
+          explanation: t('engine_expl_clustering')
         },
         { 
           label: 'System Influence Score', 
           expr: 'SIS = 0.4·DC + 0.3·BC + 0.3·PR + 0.1·Density + 0.1·Clustering',
-          explanation: 'Score composto ponderando as cinco métricas de rede: centralidade de grau (40%), betweenness (30%), PageRank (30%), densidade (10%) e clustering (10%)'
+          explanation: t('engine_expl_score_composite')
         },
       ],
       breakdowns: hasSdgs && degCentrality ? selectedSDGs.map(id => {
@@ -1198,17 +1200,17 @@ export function EngineStatusPanel() {
       academicReferences: [
         {
           concept: 'Degree Centrality',
-          explanation: 'Mede a importância de um nó pelo número de conexões diretas. Nós com alta centralidade de grau são hubs de conexão na rede.',
+          explanation: t('engine_expl_degree_importance'),
           references: ['Freeman, L. C. (1978). Centrality in social networks. Social Networks, 1(3), 215-239.'],
         },
         {
           concept: 'Betweenness Centrality',
-          explanation: 'Identifica nós que atuam como pontes entre diferentes partes da rede, controlando o fluxo de informação e recursos.',
+          explanation: t('engine_expl_bridge_nodes'),
           references: ['Brandes, U. (2001). A faster algorithm for betweenness centrality. Journal of Mathematical Sociology, 25(2), 163-177.'],
         },
         {
           concept: 'PageRank',
-          explanation: 'Algoritmo de ranqueamento que atribui importância baseada não apenas no número de conexões, mas também na importância dos nós conectados.',
+          explanation: t('engine_expl_ranking_algo'),
           references: ['Brin, S., & Page, L. (1998). The anatomy of a large-scale hypertextual Web search engine. Computer Networks, 30(1-7), 107-117.'],
         },
       ],
@@ -1233,22 +1235,22 @@ export function EngineStatusPanel() {
         { 
           label: 'SBI', 
           expr: 'SBI = Σ coeff(i,j) / C(n,2)',
-          explanation: 'Média aritmética de todos os coeficientes de par ODS na seleção'
+          explanation: t('engine_expl_avg_coeff_pair_ods')
         },
         { 
           label: 'MCDA Score', 
           expr: 'Score = 50·(n/17) + 50·SBI',
-          explanation: 'Pondera amplitude da seleção (50%) e coerência de sinergia (50%)'
+          explanation: t('engine_expl_weighted_amplitude_coherence')
         },
         { 
           label: 'Network Density', 
           expr: 'D = 2m / n(n-1)',
-          explanation: 'Proporção de conexões existentes em relação ao total possível'
+          explanation: t('engine_expl_connection_proportion')
         },
         { 
           label: 'Synergy Factor', 
           expr: 'SF = Σ max(0, coeff(i,j)) / m',
-          explanation: 'Média apenas de coeficientes positivos (sinergias)'
+          explanation: t('engine_expl_positive_coeff_avg')
         },
       ],
       breakdowns: project ? [
@@ -1282,12 +1284,12 @@ export function EngineStatusPanel() {
       academicReferences: [
         {
           concept: 'MCDA (Multi-Criteria Decision Analysis)',
-          explanation: 'Metodologia estruturada para avaliar alternativas baseadas em múltiplos critérios, permitindo decisões complexas em contextos de incerteza.',
+          explanation: t('engine_expl_methodology'),
           references: ['Figueira, J., et al. (2005). Multiple criteria decision analysis: State of the art surveys. Springer.'],
         },
         {
           concept: 'Synergy Balance Index (SBI)',
-          explanation: 'Métrica proprietária que quantifica o balanço líquido de sinergias vs trade-offs em uma configuração de metas ODS.',
+          explanation: t('engine_expl_metric_balance'),
           references: ['Nilsson, M., et al. (2016). Understanding the coherence between the Sustainable Development Goals. Stockholm Environment Institute.'],
         },
       ],
@@ -1314,22 +1316,22 @@ export function EngineStatusPanel() {
         { 
           label: 'Impact Score', 
           expr: 'I = 0.35·SBI + 0.30·n + 0.20·E + 0.15·T - P',
-          explanation: '35% sinergia, 30% amplitude, 20% eficiência, 15% equipe, menos penalidades'
+          explanation: t('engine_expl_sustainability_factors')
         },
         { 
           label: 'Positive Influence', 
           expr: 'PI = posEdges/totalEdges',
-          explanation: 'Proporção de conexões positivas na rede'
+          explanation: t('engine_expl_centrality_avg')
         },
         { 
           label: 'Degree Centrality', 
           expr: 'DC = avg(deg(v))',
-          explanation: 'Centralidade média dos nós na rede'
+          explanation: t('engine_expl_intermediary_centrality_avg')
         },
         { 
           label: 'Betweenness Centrality', 
           expr: 'BC = avg(betweenness(v))',
-          explanation: 'Centralidade de intermediação média'
+          explanation: t('engine_expl_intermediary_centrality_avg')
         },
       ],
       breakdowns: project ? [
@@ -1377,12 +1379,12 @@ export function EngineStatusPanel() {
       academicReferences: [
         {
           concept: 'Network Impact Theory',
-          explanation: 'Teoria que modela o impacto sistêmico através das interconexões em redes complexas, onde efeitos cascata amplificam ou atenuam resultados.',
+          explanation: t('engine_expl_systemic_impact_theory'),
           references: ['Granovetter, M. (1978). Threshold models of collective behavior. American Journal of Sociology, 83(6), 1420-1443.'],
         },
         {
           concept: 'Impact Multiplier',
-          explanation: 'Fator multiplicador que quantifica como sinergias sistêmicas amplificam o alcance e eficácia de intervenções.',
+          explanation: t('engine_expl_sustainability_multiplier'),
           references: ['UNDP (2017). Human Development Report: Systemic thinking for development. United Nations Development Programme.'],
         },
       ],
@@ -1408,22 +1410,22 @@ export function EngineStatusPanel() {
         { 
           label: 'Sustainability Score', 
           expr: 'S = 0.35·dur + 0.45·SBI + 0.20·team',
-          explanation: '35% duração, 45% sinergia, 20% capacidade de equipe'
+          explanation: t('engine_expl_duration_synergy_team')
         },
         { 
           label: 'Resilience', 
           expr: 'R = 0.5·Clustering + 0.5·Density',
-          explanation: 'Combina coeficiente de agrupamento e densidade da rede'
+          explanation: t('engine_expl_coefficient_clustering_density')
         },
         { 
           label: 'Low Conflict Ratio', 
           expr: 'LCR = 1 − negEdges/totalEdges',
-          explanation: 'Proporção de pares ODS sem trade-offs negativos'
+          explanation: t('engine_expl_pair_without_tradeoffs')
         },
         { 
           label: 'Feasibility Index', 
           expr: 'F = 0.35·RC + 0.35·IS + 0.20·CC + 0.10·CP',
-          explanation: '35% cap. recursos, 35% simplicidade exec., 20% coordenação, 10% penalidade conflito'
+          explanation: t('engine_expl_resource_capacity')
         },
       ],
       breakdowns: project ? [
@@ -1464,12 +1466,12 @@ export function EngineStatusPanel() {
       academicReferences: [
         {
           concept: 'Network Resilience',
-          explanation: 'Capacidade de uma rede manter funcionalidade diante de perturbações, medida através de redundância, clustering e densidade de conexões.',
+          explanation: t('engine_expl_resilience_capacity'),
           references: ['Albert, R., et al. (2000). Error and attack tolerance of complex networks. Nature, 406(6794), 378-382.'],
         },
         {
           concept: 'Sustainability Science',
-          explanation: 'Campo interdisciplinar que estuda a interação entre sistemas sociais e ambientais, focando em viabilidade de longo prazo.',
+          explanation: t('engine_expl_interdisciplinary_field'),
           references: ['Kates, R. W., et al. (2001). Sustainability science. Science, 292(5517), 641-642.'],
         },
       ],
@@ -1500,22 +1502,22 @@ export function EngineStatusPanel() {
         { 
           label: 'Coverage', 
           expr: 'C = n_ODS × 3 objetivos',
-          explanation: 'Cobertura total de objetivos por ODS selecionado'
+          explanation: t('engine_expl_coverage_total')
         },
         { 
           label: 'Pair Analysis', 
           expr: 'Pairs = C(n,2) pares avaliados',
-          explanation: 'Número total de pares ODS analisados para conflitos'
+          explanation: t('engine_expl_total_pairs')
         },
         { 
           label: 'Project Name', 
           expr: 'f(SDG₁.name + SDG₂.name)',
-          explanation: 'Nomenclatura determinística dos dois primeiros ODS'
+          explanation: t('engine_expl_nomenclature')
         },
         { 
           label: 'Reach Projection', 
           expr: 'R = Benef × (1 + SBI·0.3) × Eff',
-          explanation: 'Projeção de alcance: Beneficiários × Multiplicador Sinergia × Multiplicador Eficiência'
+          explanation: t('engine_expl_reach_projection')
         },
       ],
       breakdowns: project ? [
@@ -1575,13 +1577,13 @@ export function EngineStatusPanel() {
             Intelligence Dashboard
           </h3>
           <p style={{ fontSize: 10, color: 'var(--text-muted)', margin: '2px 0 0', fontWeight: 500 }}>
-            Framework computacional de inteligência cívica baseado em teoria dos grafos, MCDA e modelagem de impacto sistêmico
+            {t('dashboard_framework_description')}
           </p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <PulseDot status={hasSdgs ? 'active' : 'idle'} />
           <span style={{ fontSize: 10, fontWeight: 700, color: hasSdgs ? '#10b981' : 'var(--text-muted)' }}>
-            {hasSdgs ? `${selectedSDGs.length} ODS ativos` : 'Aguardando seleção'}
+            {hasSdgs ? `${selectedSDGs.length} ${t('engine_ods_active')}` : t('engine_awaiting_selection')}
           </span>
         </div>
       </div>
@@ -1710,7 +1712,7 @@ export function EngineStatusPanel() {
               </div>
             </div>
             <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 10, textAlign: 'center' }}>
-              Cada motor alimenta o próximo com dados processados, criando um pipeline de inteligência cívica determinístico
+              {t('engine_pipeline_description')}
             </div>
           </div>
         </div>
@@ -1732,10 +1734,10 @@ export function EngineStatusPanel() {
           </svg>
           <div>
             <div style={{ fontSize: 10, fontWeight: 700, color: '#f59e0b' }}>
-              Métricas de Rede Limitadas
+              {t('engine_network_limited')}
             </div>
             <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>
-              Network metrics become more reliable above 5–7 SDGs. Current: {selectedSDGs.length} SDGs.
+              {t('engine_network_limited_desc', { count: selectedSDGs.length })}
             </div>
           </div>
         </div>
@@ -2134,31 +2136,31 @@ export function EngineStatusPanel() {
         boxShadow: 'var(--clay-input-shadow)',
       }}>
         <div style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' as const, letterSpacing: '0.5px', marginBottom: 8 }}>
-          Metodologia Geral do Framework
+          {t('engine_general_methodology')}
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
           <div>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#6366f1', marginBottom: 4 }}>Teoria dos Grafos</div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: '#6366f1', marginBottom: 4 }}>{t('engine_graph_theory')}</div>
             <div style={{ fontSize: 9, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Análise de redes ODS usando métricas de centralidade (Degree, Betweenness, PageRank) para identificar influência sistêmica e comunidades.
+              {t('engine_graph_theory_desc')}
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#f59e0b', marginBottom: 4 }}>MCDA (Análise Multicritério)</div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: '#f59e0b', marginBottom: 4 }}>{t('engine_mcda_label')}</div>
             <div style={{ fontSize: 9, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Synergy Balance Index (SBI) calcula coerência de sinergia entre ODS. Score pondera amplitude e coerência sistêmica.
+              {t('engine_mcda_desc')}
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#10b981', marginBottom: 4 }}>Modelagem de Impacto</div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: '#10b981', marginBottom: 4 }}>{t('engine_impact_modeling')}</div>
             <div style={{ fontSize: 9, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Combina sinergia, amplitude e eficiência de recursos com penalidades por trade-offs. Multiplicador de alcance baseado em SBI.
+              {t('engine_impact_modeling_desc')}
             </div>
           </div>
           <div>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#3b82f6', marginBottom: 4 }}>Modelagem de Sustentabilidade</div>
+            <div style={{ fontSize: 10, fontWeight: 600, color: '#3b82f6', marginBottom: 4 }}>{t('engine_sustainability_modeling')}</div>
             <div style={{ fontSize: 9, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Avalia durabilidade temporal, coerência estrutural e resiliência de rede. Low Conflict Ratio indica configuração sustentável.
+              {t('engine_sustainability_modeling_desc')}
             </div>
           </div>
         </div>
@@ -2177,7 +2179,7 @@ export function EngineStatusPanel() {
           color: 'var(--text-muted)',
           fontWeight: 500,
         }}>
-          <IconLightning /> Selecione ODS no Simulador de Impacto para ativar os motores em tempo real
+          <IconLightning /> {t('engine_select_hint')}
         </div>
       )}
     </div>

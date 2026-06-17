@@ -1,3 +1,5 @@
+import i18n from '../i18n';
+
 /**
  * Emergent Behavior Detection Engine
  * Detects interactions between simulator variables that create emergent risks and opportunities
@@ -66,10 +68,10 @@ function analyzeTeamCapacity(inputs: {
       type: 'warning',
       severity: 'critical',
       category: 'capacity',
-      title: 'Capacidade de Equipe Insuficiente',
-      description: `Capacidade da equipe insuficiente para escala atual de beneficiários. Cada membro da equipe seria responsável por ${beneficiariesPerTeamMember.toFixed(0)} beneficiários.`,
+      title: i18n.t('emergent_team_capacity_insufficient'),
+      description: i18n.t('emergent_team_capacity_insufficient_desc', { ratio: beneficiariesPerTeamMember.toFixed(0) }),
       affectedVariables: ['beneficiaries', 'teamSize'],
-      recommendation: 'Aumentar tamanho da equipe ou reduzir escala de beneficiários para viabilidade operacional.'
+      recommendation: i18n.t('emergent_team_capacity_insufficient_rec')
     };
   }
   
@@ -78,10 +80,10 @@ function analyzeTeamCapacity(inputs: {
       type: 'warning',
       severity: 'high',
       category: 'capacity',
-      title: 'Pressão Operacional Elevada',
-      description: `Alta pressão operacional detectada. Cada membro da equipe seria responsável por ${beneficiariesPerTeamMember.toFixed(0)} beneficiários.`,
+      title: i18n.t('emergent_operational_pressure'),
+      description: i18n.t('emergent_operational_pressure_desc', { ratio: beneficiariesPerTeamMember.toFixed(0) }),
       affectedVariables: ['beneficiaries', 'teamSize'],
-      recommendation: 'Considerar aumento moderado da equipe ou especialização de funções.'
+      recommendation: i18n.t('emergent_operational_pressure_rec')
     };
   }
   
@@ -90,8 +92,8 @@ function analyzeTeamCapacity(inputs: {
       type: 'warning',
       severity: 'medium',
       category: 'capacity',
-      title: 'Capacidade Operacional Moderada',
-      description: `Capacidade operacional em nível moderado. Cada membro da equipe seria responsável por ${beneficiariesPerTeamMember.toFixed(0)} beneficiários.`,
+      title: i18n.t('emergent_moderate_capacity'),
+      description: i18n.t('emergent_moderate_capacity_desc', { ratio: beneficiariesPerTeamMember.toFixed(0) }),
       affectedVariables: ['beneficiaries', 'teamSize']
     };
   }
@@ -117,10 +119,10 @@ function analyzeBudgetReachSustainability(inputs: {
       type: 'warning',
       severity: 'critical',
       category: 'sustainability',
-      title: 'Sustentabilidade Financeira em Risco',
-      description: `Alto alcance operacional com orçamento limitado pode reduzir sustentabilidade. Orçamento de $${budgetPerBeneficiary.toFixed(2)} por beneficiário é insuficiente.`,
+      title: i18n.t('emergent_financial_risk'),
+      description: i18n.t('emergent_financial_risk_desc', { amount: budgetPerBeneficiary.toFixed(2) }),
       affectedVariables: ['budget', 'beneficiaries'],
-      recommendation: 'Aumentar orçamento ou reduzir escala para garantir viabilidade financeira.'
+      recommendation: i18n.t('emergent_financial_risk_rec')
     };
   }
   
@@ -129,10 +131,10 @@ function analyzeBudgetReachSustainability(inputs: {
       type: 'warning',
       severity: 'high',
       category: 'sustainability',
-      title: 'Pressão Financeira Significativa',
-      description: `Pressão financeira significativa detectada. Orçamento de $${budgetPerBeneficiary.toFixed(2)} por beneficiário exige otimização de recursos.`,
+      title: i18n.t('emergent_financial_pressure'),
+      description: i18n.t('emergent_financial_pressure_desc', { amount: budgetPerBeneficiary.toFixed(2) }),
       affectedVariables: ['budget', 'beneficiaries'],
-      recommendation: 'Revisar alocação de recursos ou buscar fontes adicionais de financiamento.'
+      recommendation: i18n.t('emergent_financial_pressure_rec')
     };
   }
   
@@ -141,8 +143,8 @@ function analyzeBudgetReachSustainability(inputs: {
       type: 'opportunity',
       severity: 'medium',
       category: 'sustainability',
-      title: 'Posição Financeira Robusta',
-      description: `✓ Posição financeira robusta com orçamento de $${budgetPerBeneficiary.toFixed(2)} por beneficiário. Alta sustentabilidade potencial.`,
+      title: i18n.t('emergent_robust_financial'),
+      description: i18n.t('emergent_robust_financial_desc', { amount: budgetPerBeneficiary.toFixed(2) }),
       affectedVariables: ['budget', 'beneficiaries']
     };
   }
@@ -166,10 +168,10 @@ function analyzeDurationDependency(inputs: {
       type: 'warning',
       severity: 'high',
       category: 'dependency',
-      title: 'Exposição à Dependência Institucional Elevada',
-      description: `Duração do projeto de ${inputs.duration} meses aumenta exposição à dependência institucional e volatilidade política.`,
+      title: i18n.t('emergent_institutional_exposure'),
+      description: i18n.t('emergent_institutional_exposure_desc', { months: inputs.duration }),
       affectedVariables: ['duration'],
-      recommendation: 'Considerar estruturação em fases ou diversificação de parceiros institucionais.'
+      recommendation: i18n.t('emergent_institutional_exposure_rec')
     };
   }
   
@@ -178,10 +180,10 @@ function analyzeDurationDependency(inputs: {
       type: 'warning',
       severity: 'medium',
       category: 'dependency',
-      title: 'Dependência Institucional Moderada',
-      description: `Duração do projeto de ${inputs.duration} meses requer coordenação institucional sustentada ao longo do tempo.`,
+      title: i18n.t('emergent_moderate_dependency'),
+      description: i18n.t('emergent_moderate_dependency_desc', { months: inputs.duration }),
       affectedVariables: ['duration'],
-      recommendation: 'Estabelecer mecanismos de governança e continuidade institucional.'
+      recommendation: i18n.t('emergent_moderate_dependency_rec')
     };
   }
   
@@ -191,10 +193,10 @@ function analyzeDurationDependency(inputs: {
       type: 'warning',
       severity: 'high',
       category: 'efficiency',
-      title: 'Risco de Implementação Acelerada',
-      description: `Duração curta de ${inputs.duration} meses com escala de ${inputs.beneficiaries} beneficiários pode comprometer qualidade de implementação.`,
+      title: i18n.t('emergent_rushed_implementation'),
+      description: i18n.t('emergent_rushed_implementation_desc', { months: inputs.duration, beneficiaries: inputs.beneficiaries }),
       affectedVariables: ['duration', 'beneficiaries'],
-      recommendation: 'Aumentar duração ou reduzir escala para garantir qualidade de implementação.'
+      recommendation: i18n.t('emergent_rushed_implementation_rec')
     };
   }
   
@@ -219,10 +221,10 @@ function analyzeEfficiency(inputs: {
       type: 'warning',
       severity: 'medium',
       category: 'efficiency',
-      title: 'Eficiência de Recursos Questionável',
-      description: `Orçamento de $${budgetPerTeamMemberPerMonth.toFixed(2)} por membro da equipe por mês pode indicar ineficiência na alocação de recursos.`,
+      title: i18n.t('emergent_resource_inefficiency'),
+      description: i18n.t('emergent_resource_inefficiency_desc', { amount: budgetPerTeamMemberPerMonth.toFixed(2) }),
       affectedVariables: ['budget', 'teamSize', 'duration'],
-      recommendation: 'Revisar estrutura de custos e otimizar alocação de recursos humanos.'
+      recommendation: i18n.t('emergent_resource_inefficiency_rec')
     };
   }
   
@@ -232,10 +234,10 @@ function analyzeEfficiency(inputs: {
       type: 'warning',
       severity: 'high',
       category: 'efficiency',
-      title: 'Sub-financiamento de Equipe',
-      description: `Orçamento de $${budgetPerTeamMemberPerMonth.toFixed(2)} por membro da equipe por mês pode indicar sub-financiamento de recursos humanos.`,
+      title: i18n.t('emergent_underfunding'),
+      description: i18n.t('emergent_underfunding_desc', { amount: budgetPerTeamMemberPerMonth.toFixed(2) }),
       affectedVariables: ['budget', 'teamSize', 'duration'],
-      recommendation: 'Aumentar orçamento ou reduzir tamanho da equipe para níveis sustentáveis.'
+      recommendation: i18n.t('emergent_underfunding_rec')
     };
   }
   
@@ -258,10 +260,10 @@ function analyzeRiskAmplification(inputs: {
       type: 'warning',
       severity: 'critical',
       category: 'dependency',
-      title: 'Amplificação de Risco Crítica',
-      description: `Nível de risco alto combinado com escala de ${inputs.beneficiaries} beneficiários cria amplificação crítica de riscos operacionais.`,
+      title: i18n.t('emergent_critical_risk'),
+      description: i18n.t('emergent_critical_risk_desc', { beneficiaries: inputs.beneficiaries }),
       affectedVariables: ['riskLevel', 'beneficiaries'],
-      recommendation: 'Implementar mecanismos robustos de mitigação de riscos e monitoramento contínuo.'
+      recommendation: i18n.t('emergent_critical_risk_rec')
     };
   }
   
@@ -270,8 +272,8 @@ function analyzeRiskAmplification(inputs: {
       type: 'warning',
       severity: 'medium',
       category: 'dependency',
-      title: 'Amplificação de Risco Moderada',
-      description: `Nível de risco moderado com escala significativa requer atenção especial à gestão de riscos.`,
+      title: i18n.t('emergent_moderate_risk'),
+      description: i18n.t('emergent_moderate_risk_desc'),
       affectedVariables: ['riskLevel', 'beneficiaries']
     };
   }

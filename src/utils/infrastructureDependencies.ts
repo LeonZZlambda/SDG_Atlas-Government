@@ -2,6 +2,7 @@
  * Infrastructure Dependency Modeling Engine
  * Detects critical infrastructure dependencies based on project characteristics
  */
+import i18n from '../i18n';
 
 export interface InfrastructureDependency {
   category: 'education' | 'digital' | 'operational' | 'physical' | 'institutional';
@@ -83,17 +84,17 @@ function analyzeEducationDependencies(inputs: {
     deps.push({
       category: 'education',
       severity: 'critical',
-      description: 'Formação Docente Especializada',
-      rationale: 'Iniciativa educacional de grande escala com orçamento limitado requer investimento significativo em capacitação de professores.',
-      mitigation: 'Estabelecer parcerias com instituições de formação docente e programas de mentoria.'
+      description: i18n.t('infra_teacher_training'),
+      rationale: i18n.t('infra_teacher_training_desc'),
+      mitigation: i18n.t('infra_teacher_training_mit')
     });
   } else if (budgetPerBeneficiary < 50) {
     deps.push({
       category: 'education',
       severity: 'high',
-      description: 'Capacitação Pedagógica Contínua',
-      rationale: 'Projeto educacional requer programas contínuos de desenvolvimento profissional para equipe docente.',
-      mitigation: 'Implementar sistema de treinamento em serviço com parcerias institucionais.'
+      description: i18n.t('infra_pedagogical'),
+      rationale: i18n.t('infra_pedagogical_desc'),
+      mitigation: i18n.t('infra_pedagogical_mit')
     });
   }
   
@@ -102,9 +103,9 @@ function analyzeEducationDependencies(inputs: {
     deps.push({
       category: 'education',
       severity: 'high',
-      description: 'Materiais Didáticos e Recursos de Aprendizagem',
-      rationale: `Escala de ${inputs.beneficiaries} beneficiários requer infraestrutura robusta de materiais educacionais.`,
-      mitigation: 'Desenvolver sistema de produção e distribuição de materiais com custos otimizados.'
+      description: i18n.t('infra_learning_materials'),
+      rationale: i18n.t('infra_learning_materials_desc', { count: inputs.beneficiaries }),
+      mitigation: i18n.t('infra_learning_materials_mit')
     });
   }
   
@@ -128,9 +129,9 @@ function analyzeDigitalDependencies(inputs: {
     deps.push({
       category: 'digital',
       severity: inputs.beneficiaries > 2000 ? 'critical' : 'high',
-      description: 'Infraestrutura Digital Contínua',
-      rationale: `Operacionalização em escala requer infraestrutura digital estável para gestão de dados, comunicação e monitoramento.`,
-      mitigation: 'Estabelecer SLAs com provedores de serviços e planos de contingência de conectividade.'
+      description: i18n.t('infra_digital'),
+      rationale: i18n.t('infra_digital_desc'),
+      mitigation: i18n.t('infra_digital_mit')
     });
   }
   
@@ -140,9 +141,9 @@ function analyzeDigitalDependencies(inputs: {
     deps.push({
       category: 'digital',
       severity: 'high',
-      description: 'Suporte Técnico Especializado',
-      rationale: 'Ratio de suporte técnico insuficiente para escala operacional planejada.',
-      mitigation: 'Alocar recursos para equipe de suporte técnico ou terceirizar serviços especializados.'
+      description: i18n.t('infra_tech_support'),
+      rationale: i18n.t('infra_tech_support_desc'),
+      mitigation: i18n.t('infra_tech_support_mit')
     });
   }
   
@@ -166,9 +167,9 @@ function analyzeEnvironmentalDependencies(inputs: {
     deps.push({
       category: 'institutional',
       severity: 'high',
-      description: 'Sistemas de Monitoramento Ambiental de Longo Prazo',
-      rationale: `Duração de ${inputs.duration} meses requer infraestrutura sustentada de monitoramento e coleta de dados ambientais.`,
-      mitigation: 'Implementar sistemas automatizados de monitoramento com parcerias institucionais.'
+      description: i18n.t('infra_env_monitoring'),
+      rationale: i18n.t('infra_env_monitoring_desc', { months: inputs.duration }),
+      mitigation: i18n.t('infra_env_monitoring_mit')
     });
   }
   
@@ -177,9 +178,9 @@ function analyzeEnvironmentalDependencies(inputs: {
     deps.push({
       category: 'physical',
       severity: 'high',
-      description: 'Infraestrutura de Resiliência Climática',
-      rationale: 'Nível de risco elevado requer investimentos em adaptação e resiliência climática da infraestrutura física.',
-      mitigation: 'Integrar avaliação de riscos climáticos no planejamento de infraestrutura.'
+      description: i18n.t('infra_climate_resilience'),
+      rationale: i18n.t('infra_climate_resilience_desc'),
+      mitigation: i18n.t('infra_climate_resilience_mit')
     });
   }
   
@@ -203,17 +204,17 @@ function analyzeScaleDependencies(inputs: {
     deps.push({
       category: 'operational',
       severity: 'critical',
-      description: 'Manutenção Operacional Recorrente',
-      rationale: `Escala de ${inputs.beneficiaries} beneficiários requer orçamento contínuo para manutenção operacional e suporte.`,
-      mitigation: 'Estabelecer fundo de manutenção operacional com fontes de financiamento diversificadas.'
+      description: i18n.t('infra_operational_maintenance'),
+      rationale: i18n.t('infra_operational_maintenance_desc', { count: inputs.beneficiaries }),
+      mitigation: i18n.t('infra_operational_maintenance_mit')
     });
   } else if (inputs.beneficiaries > 1000) {
     deps.push({
       category: 'operational',
       severity: 'high',
-      description: 'Suporte Operacional Estruturado',
-      rationale: 'Escala significativa requer estrutura operacional dedicada para suporte contínuo.',
-      mitigation: 'Desenvolver plano de operações com alocação clara de recursos.'
+      description: i18n.t('infra_operational_support'),
+      rationale: i18n.t('infra_operational_support_desc'),
+      mitigation: i18n.t('infra_operational_support_mit')
     });
   }
   
@@ -222,9 +223,9 @@ function analyzeScaleDependencies(inputs: {
     deps.push({
       category: 'physical',
       severity: 'high',
-      description: 'Logística e Distribuição Geográfica',
-      rationale: 'Alcance geográfico amplo requer infraestrutura logística para distribuição de recursos e serviços.',
-      mitigation: 'Estabelecer parcerias logísticas e otimizar rotas de distribuição.'
+      description: i18n.t('infra_logistics'),
+      rationale: i18n.t('infra_logistics_desc'),
+      mitigation: i18n.t('infra_logistics_mit')
     });
   }
   
@@ -250,9 +251,9 @@ function analyzeBudgetDependencies(inputs: {
     deps.push({
       category: 'institutional',
       severity: 'critical',
-      description: 'Fluxo de Caixa e Disponibilidade de Recursos',
-      rationale: `Orçamento mensal de $${monthlyBudget.toFixed(0)} insuficiente para escala operacional planejada.`,
-      mitigation: 'Diversificar fontes de financiamento e estabelecer reservas de contingência.'
+      description: i18n.t('infra_cashflow'),
+      rationale: i18n.t('infra_cashflow_desc', { amount: monthlyBudget.toFixed(0) }),
+      mitigation: i18n.t('infra_cashflow_mit')
     });
   }
   
@@ -261,9 +262,9 @@ function analyzeBudgetDependencies(inputs: {
     deps.push({
       category: 'institutional',
       severity: 'high',
-      description: 'Capacidade de Procurement e Aquisições',
-      rationale: 'Orçamento limitado com escala elevada requer processos eficientes de procurement e negociação.',
-      mitigation: 'Implementar sistema de compras centralizadas e parcerias estratégicas com fornecedores.'
+      description: i18n.t('infra_procurement'),
+      rationale: i18n.t('infra_procurement_desc'),
+      mitigation: i18n.t('infra_procurement_mit')
     });
   }
   

@@ -16,7 +16,9 @@ import {
 
 export function Dashboard() {
   const { state, dispatch } = usePlatform();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLang = i18n.language || 'pt-BR';
+  const langKey: 'pt' | 'en' | 'es' = currentLang.startsWith('en') ? 'en' : currentLang.startsWith('es') ? 'es' : 'pt';
   const [showComparison, setShowComparison] = useState(false);
   const [showSimulation, setShowSimulation] = useState(false);
 
@@ -117,19 +119,19 @@ export function Dashboard() {
           <span className="stat-card-value">{totalBeneficiaries.toLocaleString()}</span>
         </div>
         <div className="clay-card stat-card">
-          <span className="stat-card-label">Emergent Impact Score</span>
+          <span className="stat-card-label">{t('dashboard_stat_emergent_impact')}</span>
           <span className="stat-card-value">{avgImpact}/100</span>
         </div>
         <div className="clay-card stat-card">
-          <span className="stat-card-label">Sustainability Score</span>
+          <span className="stat-card-label">{t('dashboard_stat_sustainability')}</span>
           <span className="stat-card-value">{avgSustain}/100</span>
         </div>
         <div className="clay-card stat-card">
-          <span className="stat-card-label">Implementation Feasibility</span>
+          <span className="stat-card-label">{t('dashboard_stat_feasibility')}</span>
           <span className="stat-card-value">{totalProjects > 0 ? Math.round(projects.reduce((acc, p) => acc + (p.generatedData.feasibility ?? 70), 0) / totalProjects) : 0}/100</span>
         </div>
         <div className="clay-card stat-card">
-          <span className="stat-card-label">Strong Synergies</span>
+          <span className="stat-card-label">{t('dashboard_stat_synergies')}</span>
           <span className="stat-card-value">{totalProjects > 0 ? Math.round(projects.reduce((acc, p) => acc + p.generatedData.synergyBalanceIndex, 0) / totalProjects * 100) : 0}%</span>
         </div>
       </div>
@@ -163,7 +165,7 @@ export function Dashboard() {
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: 4, verticalAlign: 'middle' }}>
               <path d="M2 12h20M2 12l5-5m-5 5l5 5" />
             </svg>
-            Simulação What-If
+            {t('dashboard_whatif_btn')}
           </button>
           <button
             onClick={() => setShowComparison(true)}
@@ -185,12 +187,12 @@ export function Dashboard() {
               <line x1="8" y1="21" x2="16" y2="21" />
               <line x1="12" y1="17" x2="12" y2="21" />
             </svg>
-            Comparar Projetos
+            {t('dashboard_compare_btn')}
           </button>
         </div>
         {projects.length < 2 && (
           <div style={{ marginTop: 8, fontSize: 10, color: 'var(--text-muted)' }}>
-            ⚠️ Mínimo de 2 projetos salvos necessários para comparação
+            ⚠️ {t('dashboard_min_projects_warning')}
           </div>
         )}
       </div>
@@ -199,8 +201,8 @@ export function Dashboard() {
       {state.selectedOds.length > 0 && (
         <div className="clay-card" style={{ marginBottom: '24px', padding: '20px' }}>
           <div style={{ marginBottom: '16px' }}>
-            <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '4px' }}>Viiuãlização    Rede de ImpacRdcto</h3>
-            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Análise sisnêmica ie intersçõee, sinergiss e depenêêicias cnare ds ODS selectonaaoõsinergias e dependências entre os ODS selecionados</p>
+            <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '4px' }}>{t('dashboard_network_viz')}</h3>
+            <p style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{t('dashboard_network_viz_desc')}</p>
           </div>
           
           {/* Build graph for visualization */}
@@ -209,7 +211,7 @@ export function Dashboard() {
             const graph: Graph = {
               nodes: selectedSDGs.map(id => ({
                 id,
-                label: SDG_METADATA.find(s => s.id === id)?.name.pt || `ODS ${id}`,
+                label: SDG_METADATA.find(s => s.id === id)?.name[langKey] || `${t('dashboard_sdg_prefix')} ${id}`,
               })),
               edges: [],
             };
@@ -248,7 +250,7 @@ export function Dashboard() {
                 {t('dashboard_frequency_chart')}
               </h3>
               <p style={{ fontSize: 10, color: 'var(--text-muted)', margin: '4px 0 0', fontWeight: 500 }}>
-                Frequência × Influência Sistêmica — derivada do Graph Algorithms Engine
+                {t('dashboard_frequency_influence')} — {t('dashboard_frequency_engine')}
               </p>
             </div>
           </div>
@@ -311,11 +313,11 @@ export function Dashboard() {
           <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 10, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ width: 12, height: 12, borderRadius: 3, background: 'var(--accent-color)', display: 'inline-block' }} />
-              Frequência nos projetos
+              {t('dashboard_legend_frequency')}
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ width: 12, height: 12, borderRadius: 3, background: 'var(--accent-color)', opacity: 0.2, display: 'inline-block' }} />
-              Influência sistêmica (Graph Engine)
+              {t('dashboard_legend_influence')}
             </span>
           </div>
 
@@ -331,13 +333,13 @@ export function Dashboard() {
                   <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.36 17 20.28 17 22" />
                   <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
                 </svg>
-                Ranking de Influência Sistêmica
+                {t('dashboard_influence_ranking')}
               </h4>
               <div style={{ display: 'grid', gridTemplateColumns: '24px 1fr auto auto', gap: '6px 12px', alignItems: 'center' }}>
                 <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>#</span>
                 <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>ODS</span>
                 <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' as const }}>Freq.</span>
-                <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' as const }}>Influência Sistêmica</span>
+                <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' as const }}>{t('dashboard_systemic_influence')}</span>
 
                 {activeOdsList.slice(0, 5).map((id, rank) => {
                   const ods = SDG_METADATA.find(o => o.id === id)!;
@@ -351,7 +353,7 @@ export function Dashboard() {
                           <span style={{ fontSize: 8, fontWeight: 800, color: '#fff' }}>{id}</span>
                         </div>
                         <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>
-                          {ods.name.pt}
+                          {ods.name[langKey]}
                         </span>
                       </div>
                       <span key={`f-${id}`} style={{ fontSize: 11, fontWeight: 800, color: 'var(--accent-color)', textAlign: 'right' as const }}>{odsCounts[id]}</span>
@@ -383,7 +385,7 @@ export function Dashboard() {
                   boxShadow: 'var(--clay-input-shadow)',
                 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#10b981', marginBottom: 8, textTransform: 'uppercase' as const }}>
-                    Top Drivers de Sinergia
+                    {t('dashboard_top_synergy_drivers')}
                   </div>
                   {activeOdsList.slice(0, 3).map((id) => {
                     const ods = SDG_METADATA.find(o => o.id === id)!;
@@ -392,7 +394,7 @@ export function Dashboard() {
                         <div style={{ width: 12, height: 12, borderRadius: 3, background: ods.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <span style={{ fontSize: 7, fontWeight: 800, color: '#fff' }}>{id}</span>
                         </div>
-                        <span style={{ fontSize: 9, fontWeight: 600, color: 'var(--text-primary)' }}>{ods.name.pt}</span>
+                        <span style={{ fontSize: 9, fontWeight: 600, color: 'var(--text-primary)' }}>{ods.name[langKey]}</span>
                       </div>
                     );
                   })}
@@ -429,12 +431,12 @@ export function Dashboard() {
                   border: '1px solid #ef444420',
                 }}>
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#ef4444', marginBottom: 8, textTransform: 'uppercase' as const }}>
-                    Gargalos Críticos
+                    {t('dashboard_critical_bottlenecks')}
                   </div>
                   {projects.filter(p => p.generatedData.tradeoffs.length > 0).slice(0, 3).map((p) => {
                     return (
                       <div key={p.id} style={{ fontSize: 9, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-                        {p.name}: {p.generatedData.tradeoffs.length} conflitos
+                        {p.name}: {p.generatedData.tradeoffs.length} {p.generatedData.tradeoffs.length === 1 ? t('dashboard_conflict') : t('dashboard_conflicts_plural')}
                       </div>
                     );
                   })}
@@ -473,7 +475,7 @@ export function Dashboard() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <h4 style={{ fontSize: 'clamp(1rem, 1.8vw, 1.125rem)', fontWeight: 800, margin: '0 0 4px 0' }}>{p.name}</h4>
                     <span style={{ fontSize: 'clamp(10px, 1.1vw, 11px)', color: 'var(--text-muted)' }}>
-                      Criado em: {new Date(p.createdAt).toLocaleDateString(state.language, { dateStyle: 'medium' })}
+                      {t('dashboard_created_at')}: {new Date(p.createdAt).toLocaleDateString(state.language, { dateStyle: 'medium' })}
                     </span>
                   </div>
                   <button
@@ -482,7 +484,7 @@ export function Dashboard() {
                     className="clay-button clay-button-danger"
                     style={{ padding: '4px 10px', fontSize: 'clamp(10px, 1.1vw, 11px)' }}
                   >
-                    Excluir
+                    {t('dashboard_delete')}
                   </button>
                 </div>
 
@@ -493,12 +495,12 @@ export function Dashboard() {
                   gap: 8,
                 }}>
                   {[
-                    { label: 'ODS Combinados', value: p.odsIds.map(id => `ODS ${id}`).join(' + '), color: 'var(--accent-color)' },
-                    { label: 'MCDA Score', value: `${p.generatedData.alignmentScore}/100`, color: '#f59e0b' },
-                    { label: 'SBI (Synergy)', value: p.generatedData.synergyBalanceIndex.toFixed(2), color: '#10b981' },
-                    { label: 'Alcance Estimado', value: `~${p.generatedData.reachEstimated.toLocaleString()} benef.`, color: '#3b82f6' },
-                    { label: 'Trade-offs', value: `${p.generatedData.tradeoffs.length} conflito${p.generatedData.tradeoffs.length !== 1 ? 's' : ''}`, color: p.generatedData.tradeoffs.length > 0 ? '#ef4444' : '#10b981' },
-                    { label: 'Gerado por', value: 'Graph Synergy + MCDA', color: '#8b5cf6' },
+                    { label: t('dashboard_sdg_combined'), value: p.odsIds.map(id => `${t('dashboard_sdg_prefix')} ${id}`).join(' + '), color: 'var(--accent-color)' },
+                    { label: t('dashboard_mcda_score'), value: `${p.generatedData.alignmentScore}/100`, color: '#f59e0b' },
+                    { label: t('dashboard_sbi_synergy'), value: p.generatedData.synergyBalanceIndex.toFixed(2), color: '#10b981' },
+                    { label: t('dashboard_estimated_reach'), value: `~${p.generatedData.reachEstimated.toLocaleString()} ${t('dashboard_beneficiaries_abbr')}`, color: '#3b82f6' },
+                    { label: t('dashboard_tradeoffs_label'), value: `${p.generatedData.tradeoffs.length} ${p.generatedData.tradeoffs.length === 1 ? t('dashboard_conflict') : t('dashboard_conflicts_plural')}`, color: p.generatedData.tradeoffs.length > 0 ? '#ef4444' : '#10b981' },
+                    { label: t('dashboard_generated_by'), value: t('dashboard_generated_by_value'), color: '#8b5cf6' },
                   ].map((item, i) => (
                     <div key={i} style={{
                       padding: '8px 10px',
@@ -544,7 +546,7 @@ export function Dashboard() {
                         <div style={{ width: '12px', height: '12px' }}>
                           {getSDGIcon(id, '', '#ffffff')}
                         </div>
-                        ODS {id}
+                        {t('dashboard_sdg_prefix')} {id}
                       </div>
                     );
                   })}
@@ -563,23 +565,23 @@ export function Dashboard() {
                 }}>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '14px', height: '14px' }}>{getIcon('budget', '', 'currentColor')}</div>
-                    Orçamento: <strong>${p.inputs.budget.toLocaleString()}</strong>
+                    {t('dashboard_budget_label')}: <strong>${p.inputs.budget.toLocaleString()}</strong>
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '14px', height: '14px' }}>{getIcon('users', '', 'currentColor')}</div>
-                    Beneficiários: <strong>{p.inputs.beneficiaries}</strong>
+                    {t('dashboard_beneficiaries_label')}: <strong>{p.inputs.beneficiaries}</strong>
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '14px', height: '14px' }}>{getIcon('calendar', '', 'currentColor')}</div>
-                    Duração: <strong>{p.inputs.duration}m</strong>
+                    {t('dashboard_duration_label')}: <strong>{p.inputs.duration}m</strong>
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '14px', height: '14px' }}>{getIcon('team', '', 'currentColor')}</div>
-                    Equipe: <strong>{p.inputs.teamSize}</strong>
+                    {t('dashboard_team_label')}: <strong>{p.inputs.teamSize}</strong>
                   </span>
                   <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <div style={{ width: '14px', height: '14px' }}>{getIcon('lightning', '', 'currentColor')}</div>
-                    Impacto: <strong>{p.generatedData.overallImpactScore}/100</strong>
+                    {t('dashboard_impact_label')}: <strong>{p.generatedData.overallImpactScore}/100</strong>
                   </span>
                 </div>
               </div>

@@ -105,7 +105,7 @@ export function ImpactCalculator() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 600, color: 'var(--text-secondary)' }}>
               <label htmlFor="input-duration">{t('calculator_input_duration')}</label>
-              <span style={{ color: 'var(--accent-color)' }}>{state.inputs.duration} Meses</span>
+              <span style={{ color: 'var(--accent-color)' }}>{state.inputs.duration} {t('unit_months')}</span>
             </div>
             <input
               id="input-duration"
@@ -124,7 +124,7 @@ export function ImpactCalculator() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.1vw, 11px)', fontWeight: 600, color: 'var(--text-secondary)' }}>
               <label htmlFor="input-teamsize">{t('calculator_input_team')}</label>
-              <span style={{ color: 'var(--accent-color)' }}>{state.inputs.teamSize} Colaboradores</span>
+              <span style={{ color: 'var(--accent-color)' }}>{state.inputs.teamSize} {t('unit_collaborators')}</span>
             </div>
             <input
               id="input-teamsize"
@@ -173,7 +173,7 @@ export function ImpactCalculator() {
                   {getIcon('warning', '', '#ef4444')}
                 </div>
                 <h3 style={{ fontSize: '15px', fontWeight: 800, color: '#ef4444', letterSpacing: '-0.5px' }}>
-                  Comportamento Emergente Detectado
+                  {t('calculator_emergent_behavior')}
                 </h3>
               </div>
               {emergentInsights.map((insight, index) => (
@@ -364,7 +364,7 @@ export function ImpactCalculator() {
               {/* SDG Alignment scale */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 'clamp(10px, 1.2vw, 12px)', fontWeight: 700 }}>
-                  <span>Alinhamento ODS (MCDA)</span>
+                  <span>{t('calculator_alignment_mcda')}</span>
                   <span>{project.alignmentScore}/100</span>
                 </div>
                 <div style={{ width: '100%', height: '8px', borderRadius: '8px', background: 'var(--bg-tertiary)', overflow: 'hidden', boxShadow: 'inset -2px -2px 4px rgba(0,0,0,0.1), inset 2px 2px 4px rgba(255,255,255,0.1)' }}>
@@ -419,7 +419,6 @@ export function ImpactCalculator() {
                   const parts = tradeoff.split(splitRx);
                   const title = parts[0];
                   const rec   = parts.length >= 3 ? parts[2].trim() : null;
-                  const recLabel = tradeoff.includes('Recommended') ? 'Recommended' : 'Recomendado';
                   
                   return (
                     <div key={i} style={{
@@ -464,7 +463,7 @@ export function ImpactCalculator() {
                             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
                           </svg>
                           <span style={{ fontSize: 'clamp(10px, 1.1vw, 11px)', color: '#10b981', fontWeight: 600, lineHeight: 1.4 }}>
-                            <strong>{recLabel}:</strong> {rec}
+                            <strong>{t('label_recommended')}:</strong> {rec}
                           </span>
                         </div>
                       )}

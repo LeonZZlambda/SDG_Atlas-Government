@@ -223,7 +223,7 @@ export function ODSRandomizer() {
               >
                 <span style={{ fontSize: '48px', display: 'block', marginBottom: '12px' }}>🎲</span>
                 <p style={{ fontSize: '14px', maxWidth: '300px', margin: '0 auto' }}>
-                  Escolha a quantidade acima e clique em Iniciar Sorteio para rodar o embaralhador.
+                  {t('randomizer_instruction')}
                 </p>
               </motion.div>
             )}
