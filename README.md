@@ -1,6 +1,6 @@
 # SDG Decision Intelligence Framework
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/) [![Preact](https://img.shields.io/badge/Preact-10.29-royalblue)](https://preactjs.com/) [![i18n](https://img.shields.io/badge/i18n-✔-green)](https://github.com/i18next/i18next)
+ [![i18n](https://img.shields.io/badge/i18n-✔-green)](https://github.com/i18next/i18next)
 
 ---
 
@@ -15,16 +15,14 @@
 ## Demo
 
 ````carousel
-![Dashboard English](file:///Users/leonzz/.gemini/antigravity/brain/8cc7c926-5567-412e-9ed6-b0aef6c2b3a9/dashboard_en_1781718837753.png)
+![Dashboard English](docs/images/dashboard_en.png)
 <!-- slide -->
-![Design System Overview](file:///Users/leonzz/.gemini/antigravity/brain/8cc7c926-5567-412e-9ed6-b0aef6c2b3a9/design_system_1781718863227.png)
+![Design System Overview](docs/images/design_system.png)
 ````
 
 ---
 
-## Vision
 
-The SDG Decision Intelligence Framework addresses a critical gap in sustainable development planning: the absence of systemic reasoning in goal selection and portfolio design. Traditional approaches treat SDGs as isolated targets, missing the complex network effects, hidden tradeoffs, and synergistic relationships that determine real‑world impact.
 
 ---
 
@@ -485,7 +483,7 @@ To the author's knowledge, no existing open-source platform combines these metho
 
 ## Scientific Architecture
 
-![Conceptual Architecture](file:///Users/leonzz/.gemini/antigravity/brain/8cc7c926-5567-412e-9ed6-b0aef6c2b3a9/conceptual_architecture_1781720907844.png)
+![Conceptual Architecture](docs/images/conceptual_architecture.png)
 
 The framework follows a rigorously defined **scientific architecture** that maps raw data through a sequence of analytical layers:
 
