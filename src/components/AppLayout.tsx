@@ -1,5 +1,5 @@
 import { useState } from 'preact/hooks';
-import { usePlatform } from '../hooks/usePlatform';
+import { usePlatform } from '../context/PlatformContext';
 import { useTranslation } from '../i18n';
 
 const NAV_ICONS: Record<string, preact.JSX.Element> = {
@@ -128,20 +128,20 @@ export function AppLayout({ children }: AppLayoutProps) {
   ] as const;
 
   const handleTabChange = (tabId: typeof state.currentTab) => {
-    dispatch.setTab(tabId);
+    dispatch({ type: 'SET_TAB', payload: tabId });
     setMobileMenuOpen(false);
   };
 
   const changeTheme = (e: any) => {
     const nextTheme = e.target.value as typeof state.theme;
-    dispatch.setTheme(nextTheme);
-    dispatch.addToast(t('toast_theme_changed'), 'success');
+    dispatch({ type: 'SET_THEME', payload: nextTheme });
+    dispatch({ type: 'ADD_TOAST', payload: { message: t('toast_theme_changed'), type: 'success' } });
   };
 
   const changeLanguage = (e: any) => {
     const nextLang = e.target.value as typeof state.language;
-    dispatch.setLanguage(nextLang);
-    dispatch.addToast(t('toast_lang_changed'), 'success');
+    dispatch({ type: 'SET_LANG', payload: nextLang });
+    dispatch({ type: 'ADD_TOAST', payload: { message: t('toast_lang_changed'), type: 'success' } });
   };
 
   return (
@@ -240,7 +240,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           {/* Reset Onboarding */}
           <button
             type="button"
-            onClick={() => dispatch.resetOnboarding()}
+            onClick={() => dispatch({ type: 'RESET_ONBOARDING' })}
             className="clay-button clay-button-primary"
             aria-label="Show onboarding tutorial again"
           >

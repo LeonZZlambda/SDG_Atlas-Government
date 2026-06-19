@@ -43,11 +43,6 @@ export function ImpactCalculator() {
     });
   };
 
-  // SVG parameters for the circular gauge meter
-  const strokeRadius = 50;
-  const strokeCircumference = 2 * Math.PI * strokeRadius;
-  const strokeOffset = strokeCircumference - (project.overallImpactScore / 100) * strokeCircumference;
-
   return (
     <section>
       <div className="page-header">
@@ -295,16 +290,16 @@ export function ImpactCalculator() {
                       <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.2"/>
                     </filter>
                   </defs>
-                  <circle cx="60" cy="60" r={strokeRadius} fill="transparent" stroke="var(--bg-tertiary)" strokeWidth="10" />
+                  <circle cx="60" cy="60" r={50} fill="transparent" stroke="var(--bg-tertiary)" strokeWidth="10" />
                   <motion.circle
                     cx="60"
                     cy="60"
-                    r={strokeRadius}
+                    r={50}
                     fill="transparent"
                     stroke="var(--accent-color)"
                     strokeWidth="10"
-                    strokeDasharray={strokeCircumference}
-                    animate={{ strokeDashoffset: strokeOffset }}
+                    strokeDasharray={2 * Math.PI * 50}
+                    animate={{ strokeDashoffset: 2 * Math.PI * 50 - (project.overallImpactScore / 100) * 2 * Math.PI * 50 }}
                     transition={{ duration: 0.4 }}
                     strokeLinecap="round"
                     filter="url(#circleShadow)"

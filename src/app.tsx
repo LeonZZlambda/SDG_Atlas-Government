@@ -1,6 +1,5 @@
 import { lazy, Suspense } from 'preact/compat';
-import { PlatformProvider } from './context/PlatformContext';
-import { usePlatform } from './hooks/usePlatform';
+import { PlatformProvider, usePlatform } from './context/PlatformContext';
 import { AppLayout } from './components/AppLayout';
 import { Onboarding } from './components/Onboarding';
 import { Toast } from './components/Toast';

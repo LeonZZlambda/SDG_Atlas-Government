@@ -7,12 +7,10 @@ import { EngineStatusPanel } from './EngineStatusPanel';
 import { SDGNetworkVisualization } from './SDGNetworkVisualization';
 import { ProjectComparison } from './ProjectComparison';
 import { WhatIfSimulation } from './WhatIfSimulation';
-import {
-  calculateDegreeCentrality,
-  calculateBetweennessCentrality,
-  calculatePageRank,
-  type Graph,
-} from '../utils/graphAlgorithms';
+import { FrequencyChart } from './Dashboard/FrequencyChart';
+import { calculateDegreeCentrality, calculateBetweennessCentrality, calculatePageRank, type Graph } from '../utils/graphAlgorithms';
+import { calculateDashboardStatistics } from '../utils/dashboardStatistics';
+import { buildFullSDGGraph, calculateSystemicInfluence, getActiveSDGsSortedByInfluence } from '../utils/graphBuilders';
 
 export function Dashboard() {
   const { state, dispatch } = usePlatform();
@@ -29,76 +27,17 @@ export function Dashboard() {
     dispatch({ type: 'ADD_TOAST', payload: { message: t('toast_project_deleted'), type: 'info' } });
   };
 
-  // Compile statistics
-  const totalProjects = projects.length;
-  const totalBeneficiaries = projects.reduce((acc, p) => acc + p.inputs.beneficiaries, 0);
-  const avgImpact = totalProjects > 0
-    ? Math.round(projects.reduce((acc, p) => acc + p.generatedData.overallImpactScore, 0) / totalProjects)
-    : 0;
-  const avgSustain = totalProjects > 0
-    ? Math.round(projects.reduce((acc, p) => acc + p.generatedData.sustainabilityIndex, 0) / totalProjects)
-    : 0;
+  // Calculate statistics using extracted utility
+  const stats = calculateDashboardStatistics(projects);
+  const { totalProjects, totalBeneficiaries, avgImpact, avgSustain, odsCounts, maxCount } = stats;
 
-  // Compile ODS frequencies (1 to 17)
-  const odsCounts: Record<number, number> = {};
-  for (let i = 1; i <= 17; i++) odsCounts[i] = 0;
+  // Build full graph and calculate systemic influence using extracted utilities
+  const fullGraph = buildFullSDGGraph();
+  const influenceResult = calculateSystemicInfluence(fullGraph);
+  const { normalizedInfluence } = influenceResult;
 
-  projects.forEach(p => {
-    p.odsIds.forEach(id => {
-      if (odsCounts[id] !== undefined) odsCounts[id]++;
-    });
-  });
-
-  const maxCount = Math.max(...Object.values(odsCounts), 1);
-
-  // SVG bar chart specs
-  const chartHeight = 150;
-  const barWidth = 16;
-  const gap = 12;
-  const chartWidth = 17 * (barWidth + gap) + gap;
-
-  // Build a full graph of ALL SDGs (1–17) for influence ranking
-  const allSDGIds = Array.from({ length: 17 }, (_, i) => i + 1);
-  const fullGraph: Graph = {
-    nodes: allSDGIds.map(id => ({ id, label: `ODS ${id}` })),
-    edges: [],
-  };
-  for (let i = 0; i < allSDGIds.length; i++) {
-    for (let j = i + 1; j < allSDGIds.length; j++) {
-      const coeff = getCoefficient(allSDGIds[i], allSDGIds[j]);
-      if (Math.abs(coeff) > 0.1) {
-        fullGraph.edges.push({ from: allSDGIds[i], to: allSDGIds[j], weight: coeff });
-      }
-    }
-  }
-  const fullDeg = calculateDegreeCentrality(fullGraph);
-  const fullBtw = calculateBetweennessCentrality(fullGraph);
-
-  // Systemic influence: 0.4*deg + 0.3*btw + 0.3*positiveInfluence, normalised 0..1
-  const rawInfluence: Record<number, number> = {};
-  allSDGIds.forEach(id => {
-    const degree = fullDeg.get(id) ?? 0;
-    const betweenness = fullBtw.get(id) ?? 0;
-    const maxBetweenness = Math.max(...Array.from(fullBtw.values()), 0.001);
-    const normalizedBetweenness = betweenness / maxBetweenness;
-    
-    // Calculate positive influence for this SDG
-    const positiveEdges = fullGraph.edges.filter(e => 
-      (e.from === id || e.to === id) && e.weight > 0
-    ).length;
-    const totalEdges = fullGraph.edges.filter(e => e.from === id || e.to === id).length;
-    const positiveInfluence = totalEdges > 0 ? positiveEdges / totalEdges : 0;
-    
-    rawInfluence[id] = 0.4 * degree + 0.3 * normalizedBetweenness + 0.3 * positiveInfluence;
-  });
-  const maxInf = Math.max(...Object.values(rawInfluence), 0.001);
-  const odsInfluence: Record<number, number> = {};
-  allSDGIds.forEach(id => { odsInfluence[id] = rawInfluence[id] / maxInf; });
-
-  // Active ODS sorted by Systemic Influence Score directly
-  const activeOdsList = allSDGIds
-    .filter(id => odsCounts[id] > 0)
-    .sort((a, b) => odsInfluence[b] - odsInfluence[a]);
+  // Get active SDGs sorted by systemic influence
+  const activeOdsList = getActiveSDGsSortedByInfluence(odsCounts, normalizedInfluence);
 
   return (
     <section>
@@ -256,58 +195,11 @@ export function Dashboard() {
           </div>
 
           {/* Bar Chart */}
-          <div style={{ overflowX: 'auto', paddingBottom: '10px' }}>
-            <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 35}`} style={{ width: '100%', minWidth: '480px', height: '100%', overflow: 'visible' }}>
-              <defs>
-                <filter id="clayShadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="0" dy="4" stdDeviation="3" floodOpacity="0.15"/>
-                </filter>
-              </defs>
-              <line x1={gap} y1={chartHeight} x2={chartWidth - gap} y2={chartHeight} stroke="var(--border-dark)" strokeWidth="1.5" />
-              <line x1={gap} y1={chartHeight / 2} x2={chartWidth - gap} y2={chartHeight / 2} stroke="var(--border-dark)" strokeWidth="0.5" strokeDasharray="4 4" />
-
-              {Array.from({ length: 17 }, (_, i) => i + 1).map((id, index) => {
-                const count = odsCounts[id];
-                const influence = odsInfluence[id];
-                const barHeight = (count / maxCount) * (chartHeight - 20);
-                const infBarH = influence * (chartHeight - 20) * 0.35; // subtle influence overlay
-                const x = gap + index * (barWidth + gap);
-                const y = chartHeight - barHeight;
-                const odsColor = SDG_METADATA.find(o => o.id === id)?.color || '#4f46e5';
-
-                return (
-                  <g key={id}>
-                    {/* Influence ghost bar (behind) */}
-                    <rect
-                      x={x} y={chartHeight - infBarH}
-                      width={barWidth} height={infBarH}
-                      rx={4} fill={odsColor} opacity={0.12}
-                    />
-                    {/* Frequency bar */}
-                    <rect
-                      x={x} y={y}
-                      width={barWidth} height={barHeight}
-                      rx={6}
-                      fill={count > 0 ? odsColor : 'var(--bg-tertiary)'}
-                      opacity={count > 0 ? 0.92 : 0.2}
-                      filter={count > 0 ? 'url(#clayShadow)' : 'none'}
-                      style={{ transition: 'all 0.3s ease' }}
-                    />
-                    {count > 0 && (
-                      <text x={x + barWidth / 2} y={y - 6}
-                        textAnchor="middle" fill="var(--text-primary)"
-                        style={{ fontSize: 'clamp(9px, 1.1vw, 10px)', fontWeight: '800', fontFamily: 'var(--font-heading)' }}
-                      >{count}</text>
-                    )}
-                    <text x={x + barWidth / 2} y={chartHeight + 20}
-                      textAnchor="middle" fill="var(--text-secondary)"
-                      style={{ fontSize: 'clamp(10px, 1.2vw, 11px)', fontWeight: '700', fontFamily: 'var(--font-heading)' }}
-                    >{id}</text>
-                  </g>
-                );
-              })}
-            </svg>
-          </div>
+          <FrequencyChart 
+            odsCounts={odsCounts}
+            maxCount={maxCount}
+            normalizedInfluence={normalizedInfluence}
+          />
 
           {/* Legend */}
           <div style={{ display: 'flex', gap: 16, marginTop: 8, fontSize: 10, color: 'var(--text-muted)', flexWrap: 'wrap' }}>
@@ -341,9 +233,10 @@ export function Dashboard() {
                 <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' as const }}>Freq.</span>
                 <span style={{ fontSize: 9, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', textAlign: 'right' as const }}>{t('dashboard_systemic_influence')}</span>
 
-                {activeOdsList.slice(0, 5).map((id, rank) => {
+                {activeOdsList.slice(0, 5).map((item, rank) => {
+                  const { id, influence } = item;
                   const ods = SDG_METADATA.find(o => o.id === id)!;
-                  const score = (odsInfluence[id] * 100).toFixed(1) + '%';
+                  const score = (influence * 100).toFixed(1) + '%';
                   const rankLabel = rank === 0 ? <svg width="16" height="16" viewBox="0 0 24 24" fill="#f59e0b" stroke="#b45309" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6" /><path d="M12 14v2" /><path d="M12 16h.01" /><path d="M7 8l5-3 5 3" /></svg> : rank === 1 ? <svg width="16" height="16" viewBox="0 0 24 24" fill="#94a3b8" stroke="#64748b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6" /><path d="M12 14v2" /><path d="M12 16h.01" /><path d="M7 8l5-3 5 3" /></svg> : rank === 2 ? <svg width="16" height="16" viewBox="0 0 24 24" fill="#b45309" stroke="#92400e" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6" /><path d="M12 14v2" /><path d="M12 16h.01" /><path d="M7 8l5-3 5 3" /></svg> : `#${rank + 1}`;
                   return (
                     <>
@@ -356,7 +249,7 @@ export function Dashboard() {
                           {ods.name[langKey]}
                         </span>
                       </div>
-                      <span key={`f-${id}`} style={{ fontSize: 11, fontWeight: 800, color: 'var(--accent-color)', textAlign: 'right' as const }}>{odsCounts[id]}</span>
+                      <span key={`f-${id}`} style={{ fontSize: 11, fontWeight: 800, color: 'var(--accent-color)', textAlign: 'right' as const }}>{item.count}</span>
                       <span key={`s-${id}`} style={{ fontSize: 11, fontWeight: 700, color: '#f59e0b', textAlign: 'right' as const }}>{score}</span>
                     </>
                   );
@@ -387,7 +280,8 @@ export function Dashboard() {
                   <div style={{ fontSize: 9, fontWeight: 700, color: '#10b981', marginBottom: 8, textTransform: 'uppercase' as const }}>
                     {t('dashboard_top_synergy_drivers')}
                   </div>
-                  {activeOdsList.slice(0, 3).map((id) => {
+                  {activeOdsList.slice(0, 3).map((item) => {
+                    const { id } = item;
                     const ods = SDG_METADATA.find(o => o.id === id)!;
                     return (
                       <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>

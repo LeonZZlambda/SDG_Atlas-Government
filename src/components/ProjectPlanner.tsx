@@ -2,7 +2,7 @@ import { useState, useEffect } from 'preact/hooks';
 import { usePlatform } from '../context/PlatformContext';
 import { useTranslation } from '../i18n';
 import { getIcon } from './ODSIcons';
-import { Logger } from '../utils/logger';
+import { exportProjectAsJSON, exportProjectAsCSV, exportProjectAsDOCX } from '../utils/projectExport';
 
 export function ProjectPlanner() {
   const { state, dispatch } = usePlatform();
@@ -70,175 +70,16 @@ export function ProjectPlanner() {
       analysis: project,
       exportedAt: new Date().toISOString()
     };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${projectName.toLowerCase().replace(/\s+/g, '_')}_project_plan.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-    dispatch({ type: 'ADD_TOAST', payload: { message: 'JSON exportado com sucesso!', type: 'success' } });
+    exportProjectAsJSON(data, dispatch, t);
   };
 
   const exportCSV = () => {
-    let csvContent = '\uFEFF'; // UTF-8 BOM for Excel compatibility
-    csvContent += 'Campo,Detalhe\n';
-    csvContent += `Projeto,"${projectName.replace(/"/g, '""')}"\n`;
-    csvContent += `Resumo,"${projectSummary.replace(/"/g, '""')}"\n`;
-    csvContent += `ODS Alinhados,"${state.selectedOds.join(', ')}"\n`;
-    csvContent += `Orçamento Alocado (USD),"${state.inputs.budget}"\n`;
-    csvContent += `Público Beneficiado,"${state.inputs.beneficiaries}"\n`;
-    csvContent += `Duração (Meses),"${state.inputs.duration}"\n`;
-    csvContent += `Equipe de Execução,"${state.inputs.teamSize}"\n`;
-    csvContent += `Índice de Impacto,"${project.overallImpactScore}"\n`;
-    csvContent += `Escala de Sustentabilidade,"${project.sustainabilityIndex}"\n`;
-    csvContent += `Alinhamento ODS,"${project.alignmentScore}"\n`;
-
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${projectName.toLowerCase().replace(/\s+/g, '_')}_project_metrics.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    dispatch({ type: 'ADD_TOAST', payload: { message: 'CSV exportado com sucesso!', type: 'success' } });
+    exportProjectAsCSV(projectName, projectSummary, state.selectedOds, state.inputs, project, dispatch, t);
   };
 
   // Structured Word Report Export via Docx Library
   const exportDOCX = async () => {
-    try {
-      const { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, AlignmentType, WidthType, BorderStyle } = await import('docx');
-      const doc = new Document({
-        sections: [{
-          properties: {},
-          children: [
-            // Heading Title
-            new Paragraph({
-              text: projectName,
-              heading: HeadingLevel.TITLE,
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({
-              text: t('export_docx_title'),
-              alignment: AlignmentType.CENTER,
-            }),
-            new Paragraph({ text: '' }), // spacer
-
-            // Section 1: Executive Summary
-            new Paragraph({
-              text: '1. Resumo Executivo',
-              heading: HeadingLevel.HEADING_1,
-            }),
-            new Paragraph({
-              text: projectSummary,
-            }),
-            new Paragraph({ text: '' }), // spacer
-
-            // Section 2: Metrics Table
-            new Paragraph({
-              text: t('export_docx_metrics_title'),
-              heading: HeadingLevel.HEADING_1,
-            }),
-            new Table({
-              width: { size: 100, type: WidthType.PERCENTAGE },
-              borders: {
-                top: { style: BorderStyle.SINGLE, size: 1, color: 'D3D3D3' },
-                bottom: { style: BorderStyle.SINGLE, size: 1, color: 'D3D3D3' },
-                left: { style: BorderStyle.SINGLE, size: 1, color: 'D3D3D3' },
-                right: { style: BorderStyle.SINGLE, size: 1, color: 'D3D3D3' },
-              },
-              rows: [
-                new TableRow({
-                  children: [
-                    new TableCell({ children: [new Paragraph({ text: t('export_docx_metric_param'), style: 'strong' })] }),
-                    new TableCell({ children: [new Paragraph({ text: t('export_docx_metric_value'), style: 'strong' })] })
-                  ]
-                }),
-                new TableRow({
-                  children: [
-                    new TableCell({ children: [new Paragraph({ text: t('export_csv_budget') })] }),
-                    new TableCell({ children: [new Paragraph({ text: `$${state.inputs.budget}` })] })
-                  ]
-                }),
-                new TableRow({
-                  children: [
-                    new TableCell({ children: [new Paragraph({ text: t('export_csv_beneficiaries') })] }),
-                    new TableCell({ children: [new Paragraph({ text: `${state.inputs.beneficiaries}` })] })
-                  ]
-                }),
-                new TableRow({
-                  children: [
-                    new TableCell({ children: [new Paragraph({ text: t('export_docx_operational_duration') })] }),
-                    new TableCell({ children: [new Paragraph({ text: `${state.inputs.duration} ${t('export_docx_months')}` })] })
-                  ]
-                }),
-                new TableRow({
-                  children: [
-                    new TableCell({ children: [new Paragraph({ text: t('export_docx_team_size') })] }),
-                    new TableCell({ children: [new Paragraph({ text: `${state.inputs.teamSize} ${t('export_docx_collaborators')}` })] })
-                  ]
-                }),
-                new TableRow({
-                  children: [
-                    new TableCell({ children: [new Paragraph({ text: t('export_docx_impact_index') })] }),
-                    new TableCell({ children: [new Paragraph({ text: `${project.overallImpactScore}/100` })] })
-                  ]
-                }),
-              ]
-            }),
-            new Paragraph({ text: '' }), // spacer
-
-            // Section 3: Objectives Checklist
-            new Paragraph({
-              text: t('export_docx_initiatives'),
-              heading: HeadingLevel.HEADING_1,
-            }),
-            ...project.objectives.map((obj: string, i: number) => (
-              new Paragraph({
-                children: [
-                  new TextRun({ text: `• [${t('export_docx_initiative')} ${i + 1}]: `, bold: true }),
-                  new TextRun({ text: obj })
-                ]
-              })
-            )),
-            new Paragraph({ text: '' }), // spacer
-
-            // Section 4: Risks & Recommended Partners
-            new Paragraph({
-              text: '4. Riscos, Mitigações e Redes de Parcerias',
-              heading: HeadingLevel.HEADING_1,
-            }),
-            new Paragraph({
-              children: [
-                new TextRun({ text: `${t('export_docx_partners')}: `, bold: true }),
-                new TextRun({ text: project.partners })
-              ]
-            }),
-            new Paragraph({ text: '' }), // spacer
-            ...project.risks.map((risk: string, i: number) => (
-              new Paragraph({
-                children: [
-                  new TextRun({ text: `Risco ODS ${i + 1}: `, bold: true }),
-                  new TextRun({ text: risk })
-                ]
-              })
-            ))
-          ]
-        }]
-      });
-
-      const blob = await Packer.toBlob(doc);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${projectName.toLowerCase().replace(/\s+/g, '_')}_plan.docx`;
-      a.click();
-      URL.revokeObjectURL(url);
-      dispatch({ type: 'ADD_TOAST', payload: { message: 'DOCX exportado com sucesso!', type: 'success' } });
-    } catch (e) {
-      Logger.error('Failed generating docx:', e);
-      dispatch({ type: 'ADD_TOAST', payload: { message: 'Erro ao gerar DOCX', type: 'error' } });
-    }
+    await exportProjectAsDOCX(projectName, projectSummary, project, dispatch, t);
   };
 
   const handlePrint = () => {

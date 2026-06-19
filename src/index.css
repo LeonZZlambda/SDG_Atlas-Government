@@ -5,7 +5,6 @@
 
 /* Import component styles */
 @import './components/TabSkeleton.css';
-@import './components/ResponsiveContainer.css';
 
 /* ── Design Tokens ─────────────────────────────────────── */
 :root {

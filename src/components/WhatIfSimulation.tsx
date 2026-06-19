@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { usePlatform } from '../context/PlatformContext';
 import { useTranslation } from '../i18n';
-import { SDG_METADATA, getCoefficient } from '../utils/projectGenerator';
-import { type Graph } from '../utils/graphAlgorithms';
+import { SDG_METADATA } from '../utils/projectGenerator';
+import { buildGraphFromSDGs, calculateSBI, calculateSimulatedMetrics, calculateOriginalMetrics } from '../utils/simulation';
 
 interface WhatIfSimulationProps {
   onClose: () => void;
@@ -19,77 +19,18 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
   const [simulatedDuration, setSimulatedDuration] = useState(state.inputs.duration);
   const [simulatedBeneficiaries, setSimulatedBeneficiaries] = useState(state.inputs.beneficiaries);
 
-  // Build graph from simulated SDGs
-  const buildGraph = (sdgs: number[]): Graph => {
-    const graph: Graph = {
-      nodes: sdgs.map(id => ({
-        id,
-        label: SDG_METADATA.find(s => s.id === id)?.name[langKey] || `ODS ${id}`,
-      })),
-      edges: [],
-    };
-    for (let i = 0; i < sdgs.length; i++) {
-      for (let j = i + 1; j < sdgs.length; j++) {
-        const coeff = getCoefficient(sdgs[i], sdgs[j]);
-        if (Math.abs(coeff) > 0.1) {
-          graph.edges.push({ from: sdgs[i], to: sdgs[j], weight: coeff });
-        }
-      }
-    }
-    return graph;
-  };
-
-  // Calculate SBI (Synergy Balance Index)
-  const calculateSBI = (graph: Graph): number => {
-    if (graph.edges.length === 0) return 0;
-    const sum = graph.edges.reduce((acc, edge) => acc + edge.weight, 0);
-    return sum / graph.edges.length;
-  };
-
-  // Calculate simulated metrics
-  const calculateSimulatedMetrics = () => {
-    const graph = buildGraph(simulatedSDGs);
-    const sbi = calculateSBI(graph);
-    
-    // Simulated Impact Score
-    const baseImpact = 40 + sbi * 35 + simulatedSDGs.length * 2.5;
-    const efficiencyBonus = Math.min(20, (simulatedBudget / simulatedBeneficiaries) * 0.01 * 20);
-    const riskPenalty = (state.inputs.riskLevel || 0.5) * 10 + graph.edges.filter(e => e.weight < 0).length * 6;
-    const simulatedImpact = Math.max(10, Math.min(100, baseImpact + efficiencyBonus - riskPenalty));
-    
-    // Simulated Sustainability Score
-    const sustainabilityScore = (simulatedDuration / 24) * 35 + sbi * 45 + Math.min(20, simulatedTeamSize / 10 * 20);
-    
-    // Simulated Reach
-    const reachMultiplier = 1 + sbi * 0.5;
-    const simulatedReach = simulatedBeneficiaries * reachMultiplier;
-    
-    // Trade-offs count
-    const tradeoffsCount = graph.edges.filter(e => e.weight < 0).length;
-
-    return {
-      impact: simulatedImpact,
-      sustainability: sustainabilityScore,
-      sbi,
-      reach: simulatedReach,
-      tradeoffs: tradeoffsCount,
-      positiveEdges: graph.edges.filter(e => e.weight > 0).length,
-      negativeEdges: graph.edges.filter(e => e.weight < 0).length,
-    };
-  };
-
-  const simulatedMetrics = calculateSimulatedMetrics();
+  const simulatedMetrics = calculateSimulatedMetrics(
+    simulatedSDGs,
+    simulatedBudget,
+    simulatedBeneficiaries,
+    simulatedDuration,
+    simulatedTeamSize,
+    state.inputs.riskLevel || 0.5,
+    langKey
+  );
   
   // Calculate original metrics for comparison
-  const originalGraph = buildGraph(state.selectedOds);
-  const originalSBI = calculateSBI(originalGraph);
-  const originalBaseImpact = 40 + originalSBI * 35 + state.selectedOds.length * 2.5;
-  const originalEfficiencyBonus = Math.min(20, (state.inputs.budget / state.inputs.beneficiaries) * 0.01 * 20);
-  const originalRiskPenalty = (state.inputs.riskLevel || 0.5) * 10 + originalGraph.edges.filter(e => e.weight < 0).length * 6;
-  const originalImpact = Math.max(10, Math.min(100, originalBaseImpact + originalEfficiencyBonus - originalRiskPenalty));
-  const originalSustainability = (state.inputs.duration / 24) * 35 + originalSBI * 45 + Math.min(20, state.inputs.teamSize / 10 * 20);
-  const originalReach = state.inputs.beneficiaries * (1 + originalSBI * 0.5);
-  const originalTradeoffs = originalGraph.edges.filter(e => e.weight < 0).length;
+  const originalMetrics = calculateOriginalMetrics(state.selectedOds, state.inputs, langKey);
 
   const toggleSDG = (id: number) => {
     setSimulatedSDGs(prev => {
@@ -273,22 +214,22 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
               <tbody>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
                   <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>{t('whatif_current')}</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{originalImpact.toFixed(1)}</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{originalSustainability.toFixed(1)}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{originalMetrics.impact.toFixed(1)}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{originalMetrics.sustainability.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, color: 'var(--text-muted)' }}>—</td>
                 </tr>
                 {[...Array(17)].map((_, i) => {
                   const sdgId = i + 1;
                   if (simulatedSDGs.includes(sdgId)) return null;
                   const testSDGs = [...simulatedSDGs, sdgId];
-                  const testGraph = buildGraph(testSDGs);
+                  const testGraph = buildGraphFromSDGs(testSDGs, langKey);
                   const testSBI = calculateSBI(testGraph);
                   const testBaseImpact = 40 + testSBI * 35 + testSDGs.length * 2.5;
                   const testEfficiencyBonus = Math.min(20, (simulatedBudget / simulatedBeneficiaries) * 0.01 * 20);
                   const testRiskPenalty = (state.inputs.riskLevel || 0.5) * 10 + testGraph.edges.filter(e => e.weight < 0).length * 6;
                   const testImpact = Math.max(10, Math.min(100, testBaseImpact + testEfficiencyBonus - testRiskPenalty));
                   const testSustainability = (simulatedDuration / 24) * 35 + testSBI * 45 + Math.min(20, simulatedTeamSize / 10 * 20);
-                  const impactChange = testImpact - originalImpact;
+                  const impactChange = testImpact - originalMetrics.impact;
                   
                   return (
                     <tr key={sdgId} style={{ borderBottom: '1px solid var(--border-dark)' }}>
@@ -329,51 +270,51 @@ export function WhatIfSimulation({ onClose }: WhatIfSimulationProps) {
               <tbody>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
                   <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>{t('whatif_impact')}</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalImpact.toFixed(1)}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalMetrics.impact.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{simulatedMetrics.impact.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>
-                    <span style={{ color: simulatedMetrics.impact > originalImpact ? '#10b981' : simulatedMetrics.impact < originalImpact ? '#ef4444' : 'var(--text-muted)' }}>
-                      {simulatedMetrics.impact > originalImpact ? '+' : ''}{(simulatedMetrics.impact - originalImpact).toFixed(1)}
+                    <span style={{ color: simulatedMetrics.impact > originalMetrics.impact ? '#10b981' : simulatedMetrics.impact < originalMetrics.impact ? '#ef4444' : 'var(--text-muted)' }}>
+                      {simulatedMetrics.impact > originalMetrics.impact ? '+' : ''}{(simulatedMetrics.impact - originalMetrics.impact).toFixed(1)}
                     </span>
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
                   <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>{t('whatif_sustainability')}</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalSustainability.toFixed(1)}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalMetrics.sustainability.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{simulatedMetrics.sustainability.toFixed(1)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>
-                    <span style={{ color: simulatedMetrics.sustainability > originalSustainability ? '#10b981' : simulatedMetrics.sustainability < originalSustainability ? '#ef4444' : 'var(--text-muted)' }}>
-                      {simulatedMetrics.sustainability > originalSustainability ? '+' : ''}{(simulatedMetrics.sustainability - originalSustainability).toFixed(1)}
+                    <span style={{ color: simulatedMetrics.sustainability > originalMetrics.sustainability ? '#10b981' : simulatedMetrics.sustainability < originalMetrics.sustainability ? '#ef4444' : 'var(--text-muted)' }}>
+                      {simulatedMetrics.sustainability > originalMetrics.sustainability ? '+' : ''}{(simulatedMetrics.sustainability - originalMetrics.sustainability).toFixed(1)}
                     </span>
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
                   <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>SBI</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalSBI.toFixed(3)}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalMetrics.sbi.toFixed(3)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{simulatedMetrics.sbi.toFixed(3)}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>
-                    <span style={{ color: simulatedMetrics.sbi > originalSBI ? '#10b981' : simulatedMetrics.sbi < originalSBI ? '#ef4444' : 'var(--text-muted)' }}>
-                      {simulatedMetrics.sbi > originalSBI ? '+' : ''}{(simulatedMetrics.sbi - originalSBI).toFixed(3)}
+                    <span style={{ color: simulatedMetrics.sbi > originalMetrics.sbi ? '#10b981' : simulatedMetrics.sbi < originalMetrics.sbi ? '#ef4444' : 'var(--text-muted)' }}>
+                      {simulatedMetrics.sbi > originalMetrics.sbi ? '+' : ''}{(simulatedMetrics.sbi - originalMetrics.sbi).toFixed(3)}
                     </span>
                   </td>
                 </tr>
                 <tr style={{ borderBottom: '1px solid var(--border-dark)' }}>
                   <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>{t('whatif_projected_reach')}</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalReach.toLocaleString()}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalMetrics.reach.toLocaleString()}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{simulatedMetrics.reach.toLocaleString()}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>
-                    <span style={{ color: simulatedMetrics.reach > originalReach ? '#10b981' : simulatedMetrics.reach < originalReach ? '#ef4444' : 'var(--text-muted)' }}>
-                      {simulatedMetrics.reach > originalReach ? '+' : ''}{(simulatedMetrics.reach - originalReach).toLocaleString()}
+                    <span style={{ color: simulatedMetrics.reach > originalMetrics.reach ? '#10b981' : simulatedMetrics.reach < originalMetrics.reach ? '#ef4444' : 'var(--text-muted)' }}>
+                      {simulatedMetrics.reach > originalMetrics.reach ? '+' : ''}{(simulatedMetrics.reach - originalMetrics.reach).toLocaleString()}
                     </span>
                   </td>
                 </tr>
                 <tr>
                   <td style={{ padding: '10px 12px', fontSize: 10, fontWeight: 600 }}>Trade-offs</td>
-                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalTradeoffs}</td>
+                  <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>{originalMetrics.tradeoffs}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 700 }}>{simulatedMetrics.tradeoffs}</td>
                   <td style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10 }}>
-                    <span style={{ color: simulatedMetrics.tradeoffs < originalTradeoffs ? '#10b981' : simulatedMetrics.tradeoffs > originalTradeoffs ? '#ef4444' : 'var(--text-muted)' }}>
-                      {simulatedMetrics.tradeoffs < originalTradeoffs ? '-' : '+'}{simulatedMetrics.tradeoffs - originalTradeoffs}
+                    <span style={{ color: simulatedMetrics.tradeoffs < originalMetrics.tradeoffs ? '#10b981' : simulatedMetrics.tradeoffs > originalMetrics.tradeoffs ? '#ef4444' : 'var(--text-muted)' }}>
+                      {simulatedMetrics.tradeoffs < originalMetrics.tradeoffs ? '-' : '+'}{simulatedMetrics.tradeoffs - originalMetrics.tradeoffs}
                     </span>
                   </td>
                 </tr>
