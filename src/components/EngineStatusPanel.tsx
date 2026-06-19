@@ -36,19 +36,39 @@ export function EngineStatusPanel() {
   const { state } = usePlatform();
   const { t } = useTranslation();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const selectedSDGs = state.selectedOds;
   const project = state.currentProject;
   const hasSdgs = selectedSDGs.length > 0;
 
-  // Build a live graph from selected SDGs
-  const graph = hasSdgs ? buildGraphFromSDGs(selectedSDGs) : { nodes: [], edges: [] };
+  // Build a live graph from selected SDGs with error handling
+  let graph: { nodes: any[]; edges: any[] };
+  try {
+    graph = hasSdgs ? buildGraphFromSDGs(selectedSDGs) : { nodes: [], edges: [] };
+  } catch (err) {
+    console.error('Error building graph:', err);
+    setError('Failed to build SDG graph');
+    graph = { nodes: [], edges: [] };
+  }
 
-  // Compute live metrics using graph algorithms
-  const degCentrality = hasSdgs ? calculateDegreeCentrality(graph) : null;
-  const betweennessCentrality = hasSdgs ? calculateBetweennessCentrality(graph) : null;
-  const pageRank = hasSdgs ? calculatePageRank(graph) : null;
-  const graphStats = hasSdgs ? getGraphStatistics(graph) : null;
+  // Compute live metrics using graph algorithms with error handling
+  let degCentrality: Map<number, number> | null = null;
+  let betweennessCentrality: Map<number, number> | null = null;
+  let pageRank: Map<number, number> | null = null;
+  let graphStats: any = null;
+
+  if (hasSdgs && !error) {
+    try {
+      degCentrality = calculateDegreeCentrality(graph);
+      betweennessCentrality = calculateBetweennessCentrality(graph);
+      pageRank = calculatePageRank(graph);
+      graphStats = getGraphStatistics(graph);
+    } catch (err) {
+      console.error('Error computing graph metrics:', err);
+      setError('Failed to compute graph metrics');
+    }
+  }
 
   const positiveEdges = graph.edges.filter(e => e.weight > 0).length;
   const negativeEdges = graph.edges.filter(e => e.weight < 0).length;
@@ -183,6 +203,49 @@ export function EngineStatusPanel() {
           50% { transform: scale(2.2); opacity: 0; }
         }
       `}</style>
+
+      {/* Error Display */}
+      {error && (
+        <div 
+          style={{
+            padding: '12px 16px',
+            marginBottom: 16,
+            borderRadius: 8,
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            color: '#ef4444',
+            fontSize: 12,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+          role="alert"
+          aria-live="polite"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          <span>{error}</span>
+          <button
+            onClick={() => setError(null)}
+            style={{
+              marginLeft: 'auto',
+              background: 'none',
+              border: 'none',
+              color: '#ef4444',
+              cursor: 'pointer',
+              fontSize: 16,
+              padding: 0,
+              lineHeight: 1,
+            }}
+            aria-label="Dismiss error"
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flexWrap: 'wrap', gap: 8 }}>

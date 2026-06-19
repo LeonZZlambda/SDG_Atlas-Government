@@ -4,6 +4,8 @@
  */
 
 import { DRIVER_GENERATION_THRESHOLDS } from '../constants/engineWeights';
+import type { GeneratedProjectData, ProjectInputs } from '../types/project';
+import type { GraphStatistics } from './graphAlgorithms';
 
 export interface Drivers {
   positive: string[];
@@ -13,22 +15,22 @@ export interface Drivers {
 export interface DriverGenerationContext {
   hasSdgs: boolean;
   selectedSDGs: number[];
-  graphStats?: any; // Use any to match the actual graphStats type from getGraphStatistics
+  graphStats?: GraphStatistics;
   graph?: { edges: { length: number } };
   positiveEdges: number;
   negativeEdges: number;
   degCentrality?: Map<number, number> | null;
   betweennessCentrality?: Map<number, number> | null;
   sbi?: number | null;
-  project?: any; // Use any to match the actual project type (GeneratedProjectData | null)
-  inputs?: any; // Use any to match the actual inputs type
+  project?: GeneratedProjectData | null;
+  inputs?: ProjectInputs;
   calculateSystemicInfluence?: (id: number) => number;
 }
 
 export function generateDrivers(
   engineId: string,
   context: DriverGenerationContext,
-  t: (key: string, params?: Record<string, any>) => string
+  t: (key: string, params?: Record<string, unknown>) => string
 ): Drivers {
   const positive: string[] = [];
   const negative: string[] = [];
@@ -51,7 +53,7 @@ export function generateDrivers(
 
 function generateGraphDrivers(
   context: DriverGenerationContext,
-  t: (key: string, params?: Record<string, any>) => string
+  t: (key: string, params?: Record<string, unknown>) => string
 ): Drivers {
   const positive: string[] = [];
   const negative: string[] = [];
@@ -92,7 +94,7 @@ function generateGraphDrivers(
 
 function generateMCDADrivers(
   context: DriverGenerationContext,
-  t: (key: string, params?: Record<string, any>) => string
+  t: (key: string, params?: Record<string, unknown>) => string
 ): Drivers {
   const positive: string[] = [];
   const negative: string[] = [];
@@ -130,7 +132,7 @@ function generateMCDADrivers(
 
 function generateImpactDrivers(
   context: DriverGenerationContext,
-  t: (key: string, params?: Record<string, any>) => string
+  t: (key: string, params?: Record<string, unknown>) => string
 ): Drivers {
   const positive: string[] = [];
   const negative: string[] = [];
@@ -180,7 +182,7 @@ function generateImpactDrivers(
 
 function generateSustainabilityDrivers(
   context: DriverGenerationContext,
-  t: (key: string, params?: Record<string, any>) => string
+  t: (key: string, params?: Record<string, unknown>) => string
 ): Drivers {
   const positive: string[] = [];
   const negative: string[] = [];

@@ -7,20 +7,38 @@ import { calculateSingleSystemicInfluence } from './graphBuilders';
 import { getCoefficient } from './projectGenerator';
 import type { Recommendation, ExecutiveInsight } from '../components/EngineStatusPanel/types';
 import type { ExplanationPanelData } from '../components/EngineStatusPanel/ExplanationPanel';
+import type { GeneratedProjectData, ProjectInputs, ScoreBreakdownItem, SensitivityItem } from '../types/project';
+import type { Graph, GraphEdge } from './graphAlgorithms';
 
+/**
+ * Context interface for analysis functions
+ * Contains all necessary data for generating analysis outputs
+ */
 export interface AnalysisContext {
+  /** Whether SDGs are selected */
   hasSdgs: boolean;
+  /** Array of selected SDG IDs (1-17) */
   selectedSDGs: number[];
-  project: any;
-  inputs: any;
+  /** Generated project data with metrics and scores */
+  project: GeneratedProjectData | null;
+  /** User input parameters for the project */
+  inputs: ProjectInputs;
+  /** Degree centrality map for each SDG node */
   degCentrality: Map<number, number> | null;
+  /** Betweenness centrality map for each SDG node */
   betweennessCentrality: Map<number, number> | null;
-  graph: any;
-  t: (key: string, params?: any) => string;
+  /** Graph structure of SDG relationships */
+  graph: Graph;
+  /** Translation function for i18n */
+  t: (key: string, params?: Record<string, unknown>) => string;
 }
 
 /**
  * Generate Explanation Panels for metrics
+ * Creates detailed explanation panels for Impact, Sustainability, and Feasibility scores
+ * 
+ * @param context - Analysis context containing project data and metrics
+ * @returns Array of explanation panel data with scores, uncertainties, and factors
  */
 export function generateExplanationPanels(context: AnalysisContext): ExplanationPanelData[] {
   const { hasSdgs, project, inputs } = context;
@@ -45,7 +63,7 @@ export function generateExplanationPanels(context: AnalysisContext): Explanation
       confidence: 'high',
       interpretation: project.overallImpactScore >= 70 ? 'Alto impacto sistêmico emergente' : project.overallImpactScore >= 50 ? 'Impacto moderado' : 'Impacto limitado',
       trend: 'increasing',
-      factors: project.scoreBreakdown.map((item: any) => ({
+      factors: project.scoreBreakdown.map((item: ScoreBreakdownItem) => ({
         name: item.name,
         impact: item.value,
         reason: item.isPositive ? 'Positive contributor' : 'Negative factor',
@@ -99,11 +117,15 @@ export function generateExplanationPanels(context: AnalysisContext): Explanation
 
 /**
  * Generate Sensitivity Analysis
+ * Analyzes which SDGs contribute most to the overall project scores
+ * 
+ * @param context - Analysis context containing project data
+ * @returns Array of sensitivity items with SDG ID, influence score, and reason
  */
 export function generateSensitivityAnalysis(context: AnalysisContext): { sdgId: number; influence: number; reason: string }[] {
   const { project } = context;
   if (!project || !project.sensitivity) return [];
-  return project.sensitivity.map((s: any) => ({
+  return project.sensitivity.map((s: SensitivityItem) => ({
     sdgId: s.sdgId,
     influence: s.contribution,
     reason: s.reason
@@ -112,6 +134,10 @@ export function generateSensitivityAnalysis(context: AnalysisContext): { sdgId: 
 
 /**
  * Generate Strategic Recommendations
+ * Provides recommendations for adding or removing SDGs to improve project outcomes
+ * 
+ * @param context - Analysis context containing project data and metrics
+ * @returns Object containing recommendations array and gaps array (missing strategic areas)
  */
 export function generateStrategicRecommendations(context: AnalysisContext): { recommendations: Recommendation[]; gaps: string[] } {
   const { hasSdgs, selectedSDGs, project, t } = context;
@@ -228,6 +254,10 @@ export function generateStrategicRecommendations(context: AnalysisContext): { re
 
 /**
  * Generate Executive Insights
+ * Provides high-level insights about opportunities, risks, and strategic considerations
+ * 
+ * @param context - Analysis context containing project data and metrics
+ * @returns Array of executive insights with type (opportunity/risk/consideration), title, description, and priority
  */
 export function generateExecutiveInsights(context: AnalysisContext): ExecutiveInsight[] {
   const { hasSdgs, selectedSDGs, project, inputs, degCentrality, betweennessCentrality, graph, t } = context;
@@ -256,8 +286,8 @@ export function generateExecutiveInsights(context: AnalysisContext): ExecutiveIn
   }
   
   // Network Configuration Analysis
-  const positiveEdges = graph.edges.filter((e: any) => e.weight > 0).length;
-  const negativeEdges = graph.edges.filter((e: any) => e.weight < 0).length;
+  const positiveEdges = graph.edges.filter((e: GraphEdge) => e.weight > 0).length;
+  const negativeEdges = graph.edges.filter((e: GraphEdge) => e.weight < 0).length;
   
   if (negativeEdges === 0 && positiveEdges > 0) {
     insights.push({

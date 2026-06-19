@@ -1,8 +1,20 @@
+/**
+ * Props for ExecutiveOutputLayer component
+ */
 interface ExecutiveOutputLayerProps {
+  /** Project data with metrics and scores */
   project: any;
+  /** Selected SDG IDs */
   selectedSDGs: number[];
 }
 
+/**
+ * ExecutiveOutputLayer Component
+ * Displays executive-level output including impact, sustainability, feasibility scores and confidence level
+ * 
+ * @param props - Component props containing project data and selected SDGs
+ * @returns JSX element rendering the executive output layer
+ */
 export function ExecutiveOutputLayer({ project, selectedSDGs }: ExecutiveOutputLayerProps) {
   return (
     <div style={{ marginBottom: 20 }}>

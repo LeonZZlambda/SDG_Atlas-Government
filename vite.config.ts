@@ -17,8 +17,34 @@ function asyncCss(): Plugin {
   }
 }
 
+/** Copy PWA assets to dist directory */
+function copyPwaAssets(): Plugin {
+  return {
+    name: 'copy-pwa-assets',
+    apply: 'build',
+    closeBundle() {
+      const fs = require('fs');
+      const path = require('path');
+      
+      // Copy manifest.json
+      const manifestSrc = path.resolve(__dirname, 'public/manifest.json');
+      const manifestDest = path.resolve(__dirname, 'dist/manifest.json');
+      if (fs.existsSync(manifestSrc)) {
+        fs.copyFileSync(manifestSrc, manifestDest);
+      }
+      
+      // Copy service worker
+      const swSrc = path.resolve(__dirname, 'public/sw.js');
+      const swDest = path.resolve(__dirname, 'dist/sw.js');
+      if (fs.existsSync(swSrc)) {
+        fs.copyFileSync(swSrc, swDest);
+      }
+    },
+  }
+}
+
 export default defineConfig({
-  plugins: [preact(), asyncCss()],
+  plugins: [preact(), asyncCss(), copyPwaAssets()],
   resolve: {
     alias: {
       react: 'preact/compat',

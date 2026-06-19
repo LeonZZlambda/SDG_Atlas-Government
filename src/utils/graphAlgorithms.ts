@@ -20,6 +20,20 @@ export interface Graph {
   edges: GraphEdge[];
 }
 
+export interface GraphStatistics {
+  nodeCount: number;
+  edgeCount: number;
+  density: number;
+  degreeCentrality: Map<number, number>;
+  betweennessCentrality: Map<number, number>;
+  closenessCentrality: Map<number, number>;
+  pageRank: Map<number, number>;
+  clusteringCoefficients: Map<number, number>;
+  averageClusteringCoefficient: number;
+  communities: Map<number, number>;
+  communityCount: number;
+}
+
 /**
  * Calculate Degree Centrality for each node
  * Degree centrality = number of connections / (n-1)

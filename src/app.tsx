@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'preact/compat';
+import { lazy, Suspense, useEffect } from 'preact/compat';
 import { PlatformProvider, usePlatform } from './context/PlatformContext';
 import { AppLayout } from './components/AppLayout';
 import { Onboarding } from './components/Onboarding';
@@ -71,6 +71,21 @@ function AppContent() {
 }
 
 export function App() {
+  useEffect(() => {
+    // Register service worker for PWA support
+    if ('serviceWorker' in navigator && typeof window !== 'undefined') {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((registration) => {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+      });
+    }
+  }, []);
+
   return (
     <PlatformProvider>
       <AppContent />
